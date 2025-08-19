@@ -28,62 +28,72 @@ public class Ronaldo {
         System.out.println(encase("Got it. I've added this task:\n  " + task + "\n"
                 + String.format("Now you have %d tasks in the list", this.list.size())));
     }
-    // addTask contains mark and unmark feature from user input
+    // reads user input
     public void readInput() {
         String input = "";
-        while(!input.equals("bye")) {
-            input = scanner.nextLine();
-            if (input.equals("bye")) {
-                this.signOff();
-                break;
-            } else if (input.equals("list")) {
-                this.printTask();
-            } else if (input.contains("mark") ) {
-                if (input.contains("unmark")) {
-                    String[] parts = input.split(" ");
-                    String numbrStr = parts[1];
-                    int number = Integer.parseInt(numbrStr);
-                    Task unmarkTask = this.list.get(number - 1);
-                    unmarkTask.unmark();
+        while (!input.equals("bye")) {
+            try {
+                input = scanner.nextLine();
+
+                if (input.equals("bye")) {
+                    this.signOff();
+                    break;
+                } else if (input.equals("list")) {
+                    this.printTask();
+                } else if (input.contains("mark")) {
+                    if (input.contains("unmark")) {
+                        String[] parts = input.split(" ");
+                        int number = Integer.parseInt(parts[1]);
+                        Task unmarkTask = this.list.get(number - 1);
+                        unmarkTask.unmark();
+                    } else {
+                        String[] parts = input.split(" ");
+                        int number = Integer.parseInt(parts[1]);
+                        Task markedTask = this.list.get(number - 1);
+                        markedTask.markAsDone();
+                    }
+                } else if (input.contains("deadline")) {
+                    String[] parts = input.split("/by");
+                    String[] split = parts[0].split(" ", 2);
+                    String description = split[1];
+                    if (description.isBlank()) {
+                        throw new EmptyStringException();
+                    }
+                    String by = parts[1];
+                    Deadline deadline = new Deadline(description, by);
+                    this.list.add(deadline);
+                    printtAddedTask(deadline);
+                } else if (input.contains("event")) {
+                    String[] parts = input.split("/");
+                    String[] split = parts[0].split(" ", 2);
+                    String description = split[1];
+                    if (description.isBlank()) {
+                        throw new EmptyStringException();
+                    }
+                    String from = parts[1];
+                    String to = parts[2];
+                    Event event = new Event(description, from, to);
+                    this.list.add(event);
+                    printtAddedTask(event);
+                } else if (input.contains("todo")) {
+                    String[] parts = input.split(" ", 2);
+                    String description = parts[1];
+                    if (description.isBlank()) {
+                        throw new EmptyStringException();
+                    }
+                    ToDos toDos = new ToDos(description);
+                    this.list.add(toDos);
+                    printtAddedTask(toDos);
                 } else {
-                    String[] parts = input.split(" ");
-                    String numbrStr = parts[1];
-                    int number = Integer.parseInt(numbrStr);
-                    Task markedTask = this.list.get(number - 1);
-                    markedTask.markAsDone();
+                    throw new InvalidInputException();
                 }
-            } else if (input.contains("deadline")) {
-                String[] parts = input.split("/by");
-                String[] split = parts[0].split(" ", 2);
-                String description = split[1];
-                String by = parts[1];
-                Deadline deadline = new Deadline(description, by);
-                this.list.add(deadline);
-                printtAddedTask(deadline);
-            } else if (input.contains("event")) {
-              String[] parts = input.split("/");
-              String[] split = parts[0].split(" ", 2);
-              String description = split[1];
-              String from = parts[1];
-              String to = parts[2];
-              Event event = new Event(description, from, to);
-              this.list.add(event);
-              printtAddedTask(event);
-            } else if (input.contains("todo")) {
-                String[] parts = input.split(" ", 2);
-                String description = parts[1];
-                ToDos toDos = new ToDos(description);
-                this.list.add(toDos);
-                printtAddedTask(toDos);
-            }
-            else {
-                System.out.println(encase("added: " + input));
-                this.list.add(new Task(input));
+
+            } catch (RonaldoException r) {
+                System.out.println(r.getMessage());
             }
         }
         scanner.close();
     }
-
 
     public void printTask() {
         int size = this.list.size();
@@ -109,13 +119,11 @@ public class Ronaldo {
             }
         }
         scanner.close();
-
     }
 
     public static void main(String[] args) {
         Ronaldo ronaldo = new Ronaldo();
         ronaldo.greet();
         ronaldo.readInput();
-
     }
 }
