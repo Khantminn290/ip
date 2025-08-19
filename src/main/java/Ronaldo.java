@@ -1,6 +1,10 @@
 import java.util.Scanner;
+import java.util.ArrayList;
 
 public class Ronaldo {
+    ArrayList<String> list = new ArrayList<>();
+    Scanner scanner = new Scanner(System.in);
+
     private String greeting = " Hello! I'm Ronaldo\n"
             + " What can I do for you? Siuu!";
 
@@ -20,8 +24,31 @@ public class Ronaldo {
         System.out.println(encase(this.bye));
     }
 
+    public void addTask() {
+        String input = "";
+        while(!input.equals("bye")) {
+            input = scanner.nextLine();
+            if (input.equals("bye")) {
+                this.signOff();
+                break;
+            } else if (input.equals("list")) {
+                this.printTask();
+            } else {
+                System.out.println(encase("added: " + input));
+                this.list.add(input);
+            }
+        }
+        scanner.close();
+    }
+
+    public void printTask() {
+        int size = this.list.size();
+        for (int i = 0; i < size; i++) {
+            System.out.println(encase(String.format("%d. %s", i+1, this.list.get(i))));
+        }
+    }
+
     public void echo() {
-        Scanner scanner = new Scanner(System.in);
         String input =  "";
         while(!input.equals("bye")) {
             input = scanner.nextLine();
@@ -38,6 +65,7 @@ public class Ronaldo {
     public static void main(String[] args) {
         Ronaldo ronaldo = new Ronaldo();
         ronaldo.greet();
-        ronaldo.echo();
+        ronaldo.addTask();
+
     }
 }
