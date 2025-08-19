@@ -28,6 +28,11 @@ public class Ronaldo {
         System.out.println(encase("Got it. I've added this task:\n  " + task + "\n"
                 + String.format("Now you have %d tasks in the list", this.list.size())));
     }
+
+    public void printtDeletedTask(Task task) {
+        System.out.println(encase("Noted. I've removed this task:\n  " + task + "\n"
+                + String.format("Now you have %d tasks in the list", this.list.size())));
+    }
     // reads user input
     public void readInput() {
         String input = "";
@@ -84,7 +89,14 @@ public class Ronaldo {
                     ToDos toDos = new ToDos(description);
                     this.list.add(toDos);
                     printtAddedTask(toDos);
-                } else {
+                } else if (input.contains("delete")) {
+                    String[] parts = input.split(" ", 2);
+                    int number = Integer.parseInt(parts[1]) - 1;
+                    Task deletedTask = this.list.get(number);
+                    this.list.remove(number);
+                    printtDeletedTask(deletedTask);
+                }
+                else {
                     throw new InvalidInputException();
                 }
 
