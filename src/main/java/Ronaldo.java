@@ -39,25 +39,34 @@ public class Ronaldo {
         while (!input.equals("bye")) {
             try {
                 input = scanner.nextLine();
+                Command command = parseCommand(input);
 
-                if (input.equals("bye")) {
+                switch (command) {
+                case BYE:
                     this.signOff();
-                    break;
-                } else if (input.equals("list")) {
+                    return;
+
+                case LIST:
                     this.printTask();
-                } else if (input.contains("mark")) {
-                    if (input.contains("unmark")) {
-                        String[] parts = input.split(" ");
-                        int number = Integer.parseInt(parts[1]);
-                        Task unmarkTask = this.list.get(number - 1);
-                        unmarkTask.unmark();
-                    } else {
-                        String[] parts = input.split(" ");
-                        int number = Integer.parseInt(parts[1]);
-                        Task markedTask = this.list.get(number - 1);
-                        markedTask.markAsDone();
-                    }
-                } else if (input.contains("deadline")) {
+                    break;
+
+                case MARK: {
+                    String[] parts = input.split(" ");
+                    int number = Integer.parseInt(parts[1]);
+                    Task markedTask = this.list.get(number - 1);
+                    markedTask.markAsDone();
+                    break;
+                }
+
+                case UNMARK: {
+                    String[] parts = input.split(" ");
+                    int number = Integer.parseInt(parts[1]);
+                    Task unmarkTask = this.list.get(number - 1);
+                    unmarkTask.unmark();
+                    break;
+                }
+
+                case DEADLINE: {
                     String[] parts = input.split("/by");
                     String[] split = parts[0].split(" ", 2);
                     String description = split[1];
@@ -68,19 +77,27 @@ public class Ronaldo {
                     Deadline deadline = new Deadline(description, by);
                     this.list.add(deadline);
                     printtAddedTask(deadline);
-                } else if (input.contains("event")) {
-                    String[] parts = input.split("/");
-                    String[] split = parts[0].split(" ", 2);
-                    String description = split[1];
+                    break;
+                }
+
+                case EVENT: {
+                    String[] parts = input.split("/from|/to");
+
+                    String description = parts[0].replaceFirst("event\\s+", "").trim();
                     if (description.isBlank()) {
                         throw new EmptyStringException();
                     }
-                    String from = parts[1];
-                    String to = parts[2];
+
+                    String from = parts[1].trim();
+                    String to = parts[2].trim();
+
                     Event event = new Event(description, from, to);
                     this.list.add(event);
                     printtAddedTask(event);
-                } else if (input.contains("todo")) {
+                    break;
+                }
+
+                case TODO: {
                     String[] parts = input.split(" ", 2);
                     String description = parts[1];
                     if (description.isBlank()) {
@@ -89,14 +106,20 @@ public class Ronaldo {
                     ToDos toDos = new ToDos(description);
                     this.list.add(toDos);
                     printtAddedTask(toDos);
-                } else if (input.contains("delete")) {
+                    break;
+                }
+
+                case DELETE: {
                     String[] parts = input.split(" ", 2);
                     int number = Integer.parseInt(parts[1]) - 1;
                     Task deletedTask = this.list.get(number);
                     this.list.remove(number);
                     printtDeletedTask(deletedTask);
+                    break;
                 }
-                else {
+
+                case INVALID:
+                default:
                     throw new InvalidInputException();
                 }
 
@@ -104,8 +127,8 @@ public class Ronaldo {
                 System.out.println(r.getMessage());
             }
         }
-        scanner.close();
     }
+
 
     public void printTask() {
         int size = this.list.size();
@@ -119,6 +142,27 @@ public class Ronaldo {
         System.out.println(encase("Here are the tasks in your list: \n" + tasks));
     }
 
+    public static Command parseCommand(String input) {
+        if (input.equals("bye")) {
+            return Command.BYE;
+        } else if (input.equals("list")) {
+            return Command.LIST;
+        } else if (input.startsWith("mark ")) {
+            return Command.MARK;
+        } else if (input.startsWith("unmark ")) {
+            return Command.UNMARK;
+        } else if (input.startsWith("deadline")) {
+            return Command.DEADLINE;
+        } else if (input.startsWith("event")) {
+            return Command.EVENT;
+        } else if (input.startsWith("todo")) {
+            return Command.TODO;
+        } else if (input.startsWith("delete")) {
+            return Command.DELETE;
+        } else {
+            return Command.INVALID;
+        }
+    }
     public void echo() {
         String input =  "";
         while(!input.equals("bye")) {
