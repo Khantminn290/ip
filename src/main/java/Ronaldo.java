@@ -1,10 +1,10 @@
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.List;
-import java.util.Scanner;
-import java.util.ArrayList;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class Ronaldo {
 
@@ -120,7 +120,7 @@ public class Ronaldo {
                 }
 
                 case DEADLINE: {
-                    String[] parts = input.split("/by");
+                    String[] parts = input.split(" /by ");
                     String[] split = parts[0].split(" ", 2);
                     String description = split[1];
                     if (description.isBlank()) {
