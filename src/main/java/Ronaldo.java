@@ -1,15 +1,10 @@
-import java.io.FileWriter;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 public class Ronaldo {
-
     ArrayList<Task> list = new ArrayList<>();
     Scanner scanner = new Scanner(System.in);
+    Storage storage = new Storage();
 
     private String greeting = " Hello! I'm Ronaldo\n"
             + " What can I do for you? Siuu!";
@@ -34,52 +29,6 @@ public class Ronaldo {
     public void printtAddedTask(Task task) {
         System.out.println(encase("Got it. I've added this task:\n  " + task + "\n"
                 + String.format("Now you have %d tasks in the list", this.list.size())));
-    }
-
-    // function to write to data file in hard disk
-    public void writeToHardDisk(String input) {
-        try {
-            // Ensure the 'data' folder exists
-            Path folder = Path.of("./src/main/java/data");
-            if (!Files.exists(folder)) {
-                Files.createDirectories(folder);  // create folder if missing
-            }
-
-            // Write the task to ronaldo.txt in append mode
-            Path file = folder.resolve("ronaldo.txt"); // ./src/main/java/data/ronaldo.txt
-            if (!Files.exists(file)) {
-                Files.createFile(file);  // create file if missing
-            }
-
-            FileWriter writer = new FileWriter(file.toFile(), true);
-            writer.write(String.format(input) + System.lineSeparator());
-            writer.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void deleteDataFromHardDisk(int number) {
-        try {
-            Path file = Path.of("./src/main/java/data/ronaldo.txt");
-            // Read all lines from the file
-            List<String> lines = Files.readAllLines(file);
-            List<String> updatedLines = new ArrayList<>();
-
-            // Keep all lines except the one to delete
-            for (int i = 0; i < lines.size(); i++) {
-                if (i != number) {
-                    updatedLines.add(lines.get(i));
-                }
-            }
-
-            // Overwrite the file with the updated list
-            Files.write(file, updatedLines);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public void printtDeletedTask(Task task) {
@@ -130,7 +79,7 @@ public class Ronaldo {
                     Deadline deadline = new Deadline(description, by);
                     this.list.add(deadline);
                     String written_format = String.format("D | %s | %s | %s", deadline.isDone, description, by );
-                    writeToHardDisk(written_format);
+                    storage.writeTask(written_format);
                     printtAddedTask(deadline);
                     break;
                 }
@@ -149,7 +98,7 @@ public class Ronaldo {
                     Event event = new Event(description, from, to);
                     this.list.add(event);
                     String written_format = String.format("E | %s | %s | %s-%s", event.isDone, description, from, to);
-                    writeToHardDisk(written_format);
+                    storage.writeTask(written_format);
                     printtAddedTask(event);
                     break;
                 }
@@ -163,7 +112,7 @@ public class Ronaldo {
                     ToDos toDos = new ToDos(description);
                     this.list.add(toDos);
                     String written_format = String.format("T | %s | %s", toDos.isDone, description);
-                    writeToHardDisk(written_format);
+                    storage.writeTask(written_format);
                     printtAddedTask(toDos);
                     break;
                 }
@@ -174,7 +123,7 @@ public class Ronaldo {
                     Task deletedTask = this.list.get(number);
                     this.list.remove(number);
                     printtDeletedTask(deletedTask);
-                    deleteDataFromHardDisk(number);
+                    storage.deleteTask(number);
                     break;
                 }
 
