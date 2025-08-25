@@ -120,7 +120,7 @@ public class Ronaldo {
                 }
 
                 case DEADLINE: {
-                    String[] parts = input.split("/by");
+                    String[] parts = input.split(" /by ");
                     String[] split = parts[0].split(" ", 2);
                     String description = split[1];
                     if (description.isBlank()) {
