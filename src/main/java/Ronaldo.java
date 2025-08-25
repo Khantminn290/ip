@@ -1,10 +1,15 @@
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Ronaldo {
-    ArrayList<Task> list = new ArrayList<>();
-    Scanner scanner = new Scanner(System.in);
-    Storage storage = new Storage();
+    private TaskList taskList;
+    private Scanner scanner;
+    private Storage storage;
+
+    public Ronaldo() {
+        this.storage = new Storage();
+        this.scanner = new Scanner(System.in);
+        this.taskList = new TaskList();
+    }
 
     private String greeting = " Hello! I'm Ronaldo\n"
             + " What can I do for you? Siuu!";
@@ -25,17 +30,16 @@ public class Ronaldo {
         System.out.println(encase(this.bye));
     }
 
-
-    public void printtAddedTask(Task task) {
+    public void printAddedTask(Task task) {
         System.out.println(encase("Got it. I've added this task:\n  " + task + "\n"
-                + String.format("Now you have %d tasks in the list", this.list.size())));
+                + String.format("Now you have %d tasks in the list", this.taskList.size())));
     }
 
-    public void printtDeletedTask(Task task) {
+    public void printDeletedTask(Task task) {
         System.out.println(encase("Noted. I've removed this task:\n  " + task + "\n"
-                + String.format("Now you have %d tasks in the list", this.list.size())));
+                + String.format("Now you have %d tasks in the list", this.taskList.size())));
     }
-    // reads user input
+
     public void readInput() {
         String input = "";
         while (!input.equals("bye")) {
@@ -49,80 +53,69 @@ public class Ronaldo {
                     return;
 
                 case LIST:
-                    this.printTask();
+                    this.printTasks();
                     break;
 
                 case MARK: {
-                    String[] parts = input.split(" ");
-                    int number = Integer.parseInt(parts[1]);
-                    Task markedTask = this.list.get(number - 1);
-                    markedTask.markAsDone();
+                    int number = Integer.parseInt(input.split(" ")[1]) - 1;
+                    taskList.markTask(number);
                     break;
                 }
 
                 case UNMARK: {
-                    String[] parts = input.split(" ");
-                    int number = Integer.parseInt(parts[1]);
-                    Task unmarkTask = this.list.get(number - 1);
-                    unmarkTask.unmark();
+                    int number = Integer.parseInt(input.split(" ")[1]) - 1;
+                    taskList.unmarkTask(number);
                     break;
                 }
 
                 case DEADLINE: {
                     String[] parts = input.split(" /by ");
-                    String[] split = parts[0].split(" ", 2);
-                    String description = split[1];
+                    String description = parts[0].replaceFirst("deadline\\s+", "").trim();
                     if (description.isBlank()) {
                         throw new EmptyStringException();
                     }
-                    String by = parts[1];
+                    String by = parts[1].trim();
                     Deadline deadline = new Deadline(description, by);
-                    this.list.add(deadline);
-                    String written_format = String.format("D | %s | %s | %s", deadline.isDone, description, by );
+                    taskList.addTask(deadline);
+                    String written_format = String.format("D | %s | %s | %s", deadline.isDone, description, by);
                     storage.writeTask(written_format);
-                    printtAddedTask(deadline);
+                    printAddedTask(deadline);
                     break;
                 }
 
                 case EVENT: {
                     String[] parts = input.split("/from|/to");
-
                     String description = parts[0].replaceFirst("event\\s+", "").trim();
                     if (description.isBlank()) {
                         throw new EmptyStringException();
                     }
-
                     String from = parts[1].trim();
                     String to = parts[2].trim();
-
                     Event event = new Event(description, from, to);
-                    this.list.add(event);
+                    taskList.addTask(event);
                     String written_format = String.format("E | %s | %s | %s-%s", event.isDone, description, from, to);
                     storage.writeTask(written_format);
-                    printtAddedTask(event);
+                    printAddedTask(event);
                     break;
                 }
 
                 case TODO: {
-                    String[] parts = input.split(" ", 2);
-                    String description = parts[1];
+                    String description = input.split(" ", 2)[1].trim();
                     if (description.isBlank()) {
                         throw new EmptyStringException();
                     }
-                    ToDos toDos = new ToDos(description);
-                    this.list.add(toDos);
-                    String written_format = String.format("T | %s | %s", toDos.isDone, description);
+                    ToDos toDo = new ToDos(description);
+                    taskList.addTask(toDo);
+                    String written_format = String.format("T | %s | %s", toDo.isDone, description);
                     storage.writeTask(written_format);
-                    printtAddedTask(toDos);
+                    printAddedTask(toDo);
                     break;
                 }
 
                 case DELETE: {
-                    String[] parts = input.split(" ", 2);
-                    int number = Integer.parseInt(parts[1]) - 1;
-                    Task deletedTask = this.list.get(number);
-                    this.list.remove(number);
-                    printtDeletedTask(deletedTask);
+                    int number = Integer.parseInt(input.split(" ")[1]) - 1;
+                    Task deletedTask = taskList.deleteTask(number);
+                    printDeletedTask(deletedTask);
                     storage.deleteTask(number);
                     break;
                 }
@@ -138,52 +131,20 @@ public class Ronaldo {
         }
     }
 
-
-    public void printTask() {
-        int size = this.list.size();
-        StringBuilder tasks = new StringBuilder();
-        for (int i = 0; i < size; i++) {
-            tasks.append(String.format("%d. %s", i + 1, this.list.get(i)));
-            if (i < size - 1) {
-                tasks.append("\n");
-            }
-        }
-        System.out.println(encase("Here are the tasks in your list: \n" + tasks));
+    public void printTasks() {
+        System.out.println(encase("Here are the tasks in your list: \n" + taskList.listTasks()));
     }
 
     public static Command parseCommand(String input) {
-        if (input.equals("bye")) {
-            return Command.BYE;
-        } else if (input.equals("list")) {
-            return Command.LIST;
-        } else if (input.startsWith("mark ")) {
-            return Command.MARK;
-        } else if (input.startsWith("unmark ")) {
-            return Command.UNMARK;
-        } else if (input.startsWith("deadline")) {
-            return Command.DEADLINE;
-        } else if (input.startsWith("event")) {
-            return Command.EVENT;
-        } else if (input.startsWith("todo")) {
-            return Command.TODO;
-        } else if (input.startsWith("delete")) {
-            return Command.DELETE;
-        } else {
-            return Command.INVALID;
-        }
-    }
-    public void echo() {
-        String input =  "";
-        while(!input.equals("bye")) {
-            input = scanner.nextLine();
-            if (input.equals("bye")) {
-                this.signOff();
-                break;
-            } else {
-                System.out.println(encase(input));
-            }
-        }
-        scanner.close();
+        if (input.equals("bye")) return Command.BYE;
+        else if (input.equals("list")) return Command.LIST;
+        else if (input.startsWith("mark ")) return Command.MARK;
+        else if (input.startsWith("unmark ")) return Command.UNMARK;
+        else if (input.startsWith("deadline")) return Command.DEADLINE;
+        else if (input.startsWith("event")) return Command.EVENT;
+        else if (input.startsWith("todo")) return Command.TODO;
+        else if (input.startsWith("delete")) return Command.DELETE;
+        else return Command.INVALID;
     }
 
     public static void main(String[] args) {
