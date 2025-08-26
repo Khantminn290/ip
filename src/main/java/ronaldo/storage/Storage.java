@@ -1,8 +1,15 @@
+package ronaldo.storage;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+
+import ronaldo.task.Task;
+import ronaldo.task.Deadline;
+import ronaldo.task.Event;
+import ronaldo.task.ToDos;
 
 public class Storage {
     protected final Path folder;

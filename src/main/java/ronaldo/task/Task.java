@@ -1,3 +1,5 @@
+package ronaldo.task;
+
 public class Task {
     protected String description;
     protected boolean isDone;
@@ -9,6 +11,10 @@ public class Task {
 
     public String getStatusIcon() {
         return (isDone? "X" : " ");
+    }
+
+    public boolean isDone() {
+        return this.isDone;
     }
 
     public void markAsDone() {

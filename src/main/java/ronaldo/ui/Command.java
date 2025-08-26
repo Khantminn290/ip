@@ -1,3 +1,5 @@
+package ronaldo.ui;
+
 public enum Command {
     LIST,
     MARK,
