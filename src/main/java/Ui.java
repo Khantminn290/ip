@@ -9,20 +9,15 @@ public class Ui {
 
     // Show a greeting message
     public void showGreeting() {
-        String greeting = " Hello! I'm Duke\n"
-                + " What can I do for you?";
+        String greeting = " Hello! I'm Ronaldo\n"
+                + " What can I do for you? SIUU";
         System.out.println(encase(greeting));
     }
 
     // Show farewell message
     public void showFarewell() {
-        String farewell = " Bye. Hope to see you again soon!";
+        String farewell = " Bye. Hope to see you again soon! SIUU";
         System.out.println(encase(farewell));
-    }
-
-    // Show loading error
-    public void showLoadingError() {
-        System.out.println(encase("Oops! There was an error loading your tasks."));
     }
 
     // Show message when a task is added
@@ -39,14 +34,21 @@ public class Ui {
         System.out.println(encase(message));
     }
 
-    // Show all tasks
-    public void showTaskList(TaskList tasks) {
-        String message = "Here are the tasks in your list:\n" + tasks.listTasks();
+    // Show message when a task is marked
+    public void showMarkedTask(Task task) {
+        String message = "Nice! I've marked this task as done:\n " + task;
         System.out.println(encase(message));
     }
 
-    // Show a custom message
-    public void showMessage(String message) {
+    // Show message when a task is unmarked
+    public void showUnmarkedTask(Task task) {
+        String message = "OK, I've marked this task as not done yet:\n" + task;
+        System.out.println(encase(message));
+    }
+
+    // Show all tasks
+    public void showTaskList(String tasks) {
+        String message = "Here are the tasks in your list:\n" + tasks;
         System.out.println(encase(message));
     }
 
