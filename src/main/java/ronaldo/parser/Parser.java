@@ -1,3 +1,7 @@
+package ronaldo.parser;
+
+import ronaldo.ui.Command;
+
 public class Parser {
     /**
      * Parses raw user input and returns the corresponding Command.

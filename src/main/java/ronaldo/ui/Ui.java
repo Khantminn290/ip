@@ -1,3 +1,6 @@
+package ronaldo.ui;
+
+import ronaldo.task.Task;
 public class Ui {
 
     // Encase messages in a nice border

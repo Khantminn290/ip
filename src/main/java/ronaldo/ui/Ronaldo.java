@@ -1,4 +1,14 @@
+package ronaldo.ui;
+
 import java.util.Scanner;
+
+import ronaldo.task.Task;
+import ronaldo.task.TaskList;
+import ronaldo.storage.Storage;
+import ronaldo.parser.Parser;
+import ronaldo.task.Deadline;
+import ronaldo.task.Event;
+import ronaldo.task.ToDos;
 
 public class Ronaldo {
     private TaskList taskList;
@@ -53,7 +63,7 @@ public class Ronaldo {
                     String by = parts[1].trim();
                     Deadline deadline = new Deadline(description, by);
                     taskList.addTask(deadline);
-                    String written_format = String.format("D | %s | %s | %s", deadline.isDone, description, by);
+                    String written_format = String.format("D | %s | %s | %s", deadline.isDone(), description, by);
                     storage.writeTask(written_format);
                     ui.showAddTask(deadline, taskList.size());
                     break;
@@ -69,7 +79,7 @@ public class Ronaldo {
                     String to = parts[2].trim();
                     Event event = new Event(description, from, to);
                     taskList.addTask(event);
-                    String written_format = String.format("E | %s | %s | %s-%s", event.isDone, description, from, to);
+                    String written_format = String.format("E | %s | %s | %s-%s", event.isDone(), description, from, to);
                     storage.writeTask(written_format);
                     ui.showAddTask(event, taskList.size());
                     break;
@@ -82,7 +92,7 @@ public class Ronaldo {
                     }
                     ToDos toDo = new ToDos(description);
                     taskList.addTask(toDo);
-                    String written_format = String.format("T | %s | %s", toDo.isDone, description);
+                    String written_format = String.format("T | %s | %s", toDo.isDone(), description);
                     storage.writeTask(written_format);
                     ui.showAddTask(toDo, taskList.size());
                     break;
