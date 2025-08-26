@@ -4,40 +4,14 @@ public class Ronaldo {
     private TaskList taskList;
     private Scanner scanner;
     private Storage storage;
+    private Ui ui;
 
     public Ronaldo() {
         this.storage = new Storage();
         this.scanner = new Scanner(System.in);
-        this.taskList = new TaskList();
-    }
-
-    private String greeting = " Hello! I'm Ronaldo\n"
-            + " What can I do for you? Siuu!";
-
-    private String bye = " Bye. Hope to see you again soon!";
-
-    public static String encase(String s) {
-        return "____________________________________________________________\n"
-                + String.format("%s\n", s)
-                + "____________________________________________________________\n";
-    }
-
-    public void greet() {
-        System.out.println(encase(this.greeting));
-    }
-
-    public void signOff() {
-        System.out.println(encase(this.bye));
-    }
-
-    public void printAddedTask(Task task) {
-        System.out.println(encase("Got it. I've added this task:\n  " + task + "\n"
-                + String.format("Now you have %d tasks in the list", this.taskList.size())));
-    }
-
-    public void printDeletedTask(Task task) {
-        System.out.println(encase("Noted. I've removed this task:\n  " + task + "\n"
-                + String.format("Now you have %d tasks in the list", this.taskList.size())));
+        this.taskList = new TaskList(storage.load());
+        this.ui = new Ui();
+        ui.showGreeting();
     }
 
     public void readInput() {
@@ -45,26 +19,28 @@ public class Ronaldo {
         while (!input.equals("bye")) {
             try {
                 input = scanner.nextLine();
-                Command command = parseCommand(input);
+                Command command = Parser.parse(input);
 
                 switch (command) {
                 case BYE:
-                    this.signOff();
+                    this.ui.showFarewell();
                     return;
 
                 case LIST:
-                    this.printTasks();
+                    this.ui.showTaskList(this.taskList.listTasks());
                     break;
 
                 case MARK: {
                     int number = Integer.parseInt(input.split(" ")[1]) - 1;
                     taskList.markTask(number);
+                    ui.showMarkedTask(taskList.getTask(number));
                     break;
                 }
 
                 case UNMARK: {
                     int number = Integer.parseInt(input.split(" ")[1]) - 1;
                     taskList.unmarkTask(number);
+                    ui.showUnmarkedTask(taskList.getTask(number));
                     break;
                 }
 
@@ -79,7 +55,7 @@ public class Ronaldo {
                     taskList.addTask(deadline);
                     String written_format = String.format("D | %s | %s | %s", deadline.isDone, description, by);
                     storage.writeTask(written_format);
-                    printAddedTask(deadline);
+                    ui.showAddTask(deadline, taskList.size());
                     break;
                 }
 
@@ -95,7 +71,7 @@ public class Ronaldo {
                     taskList.addTask(event);
                     String written_format = String.format("E | %s | %s | %s-%s", event.isDone, description, from, to);
                     storage.writeTask(written_format);
-                    printAddedTask(event);
+                    ui.showAddTask(event, taskList.size());
                     break;
                 }
 
@@ -108,14 +84,14 @@ public class Ronaldo {
                     taskList.addTask(toDo);
                     String written_format = String.format("T | %s | %s", toDo.isDone, description);
                     storage.writeTask(written_format);
-                    printAddedTask(toDo);
+                    ui.showAddTask(toDo, taskList.size());
                     break;
                 }
 
                 case DELETE: {
                     int number = Integer.parseInt(input.split(" ")[1]) - 1;
                     Task deletedTask = taskList.deleteTask(number);
-                    printDeletedTask(deletedTask);
+                    ui.showDeleteTask(deletedTask, taskList.size());
                     storage.deleteTask(number);
                     break;
                 }
@@ -126,30 +102,13 @@ public class Ronaldo {
                 }
 
             } catch (RonaldoException r) {
-                System.out.println(r.getMessage());
+                ui.showError(r.getMessage());
             }
         }
     }
 
-    public void printTasks() {
-        System.out.println(encase("Here are the tasks in your list: \n" + taskList.listTasks()));
-    }
-
-    public static Command parseCommand(String input) {
-        if (input.equals("bye")) return Command.BYE;
-        else if (input.equals("list")) return Command.LIST;
-        else if (input.startsWith("mark ")) return Command.MARK;
-        else if (input.startsWith("unmark ")) return Command.UNMARK;
-        else if (input.startsWith("deadline")) return Command.DEADLINE;
-        else if (input.startsWith("event")) return Command.EVENT;
-        else if (input.startsWith("todo")) return Command.TODO;
-        else if (input.startsWith("delete")) return Command.DELETE;
-        else return Command.INVALID;
-    }
-
     public static void main(String[] args) {
         Ronaldo ronaldo = new Ronaldo();
-        ronaldo.greet();
         ronaldo.readInput();
     }
 }
