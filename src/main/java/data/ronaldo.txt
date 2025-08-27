@@ -1,2 +1,5 @@
 T | false | hi
 T | false | Hi
+T | false | hi
+T | false | watch football
+E | false | concert | monday 3pm-8pm
