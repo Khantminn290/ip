@@ -11,10 +11,23 @@ import ronaldo.task.Deadline;
 import ronaldo.task.Event;
 import ronaldo.task.ToDos;
 
+/**
+ * Handles persistent storage of tasks for the Ronaldo task manager.
+ * Creates and manages the storage file, and provides methods
+ * to write, delete, and load tasks.
+ */
 public class Storage {
+
+    /** Path to the folder containing the storage file. */
     protected final Path folder;
+
+    /** Path to the storage file where tasks are saved. */
     protected final Path file;
 
+    /**
+     * Constructs a {@code Storage} object.
+     * Ensures that the storage folder and file are created if they do not exist.
+     */
     public Storage() {
         this.folder = Path.of("./src/main/java/data");
         this.file = folder.resolve("ronaldo.txt");
@@ -33,6 +46,11 @@ public class Storage {
         }
     }
 
+    /**
+     * Writes a task representation to the storage file.
+     *
+     * @param line the string representation of the task to be stored.
+     */
     public void writeTask(String line) {
         try (FileWriter writer = new FileWriter(this.file.toFile(), true)) {
             writer.write(line + System.lineSeparator());
@@ -41,6 +59,11 @@ public class Storage {
         }
     }
 
+    /**
+     * Deletes a task from the storage file by its index.
+     *
+     * @param index the zero-based index of the task to delete.
+     */
     public void deleteTask(int index) {
         try {
             ArrayList<String> lines = new ArrayList<>(Files.readAllLines(file));
@@ -51,7 +74,12 @@ public class Storage {
         }
     }
 
-    // Load tasks from file into an ArrayList<Task>
+    /**
+     * Loads tasks from the storage file into memory.
+     * Reconstructs task objects (ToDos, Deadlines, Events) from their stored string representations.
+     *
+     * @return a list of tasks loaded from the file. Returns an empty list if the file is empty or an error occurs.
+     */
     public ArrayList<Task> load() {
         ArrayList<Task> tasks = new ArrayList<>();
         try {
@@ -60,23 +88,33 @@ public class Storage {
                 String[] parts = line.split(" \\| ");
                 String type = parts[0];
                 boolean isDone = Boolean.parseBoolean(parts[1]);
+
                 switch (type) {
                 case "T":
                     ToDos todo = new ToDos(parts[2]);
-                    if (isDone) todo.markAsDone();
+                    if (isDone) {
+                        todo.markAsDone();
+                    }
                     tasks.add(todo);
                     break;
+
                 case "D":
                     Deadline deadline = new Deadline(parts[2], parts[3]);
-                    if (isDone) deadline.markAsDone();
+                    if (isDone) {
+                        deadline.markAsDone();
+                    }
                     tasks.add(deadline);
                     break;
+
                 case "E":
                     String[] time = parts[3].split("-");
                     Event event = new Event(parts[2], time[0], time[1]);
-                    if (isDone) event.markAsDone();
+                    if (isDone) {
+                        event.markAsDone();
+                    }
                     tasks.add(event);
                     break;
+
                 default:
                     System.out.println("Unknown task type: " + type);
                 }
@@ -87,3 +125,4 @@ public class Storage {
         return tasks;
     }
 }
+
