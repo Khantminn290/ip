@@ -10,12 +10,30 @@ import ronaldo.task.Deadline;
 import ronaldo.task.Event;
 import ronaldo.task.ToDos;
 
+/**
+ * The main class for the Ronaldo task manager application.
+ * Handles initialization, user input, command parsing, task management,
+ * and interaction with the storage and UI components.
+ */
 public class Ronaldo {
+
+    /** The list of tasks managed by the application. */
     private TaskList taskList;
+
+    /** The scanner used for reading user input. */
     private Scanner scanner;
+
+    /** The storage component responsible for saving and loading tasks. */
     private Storage storage;
+
+    /** The UI component for displaying messages to the user. */
     private Ui ui;
 
+    /**
+     * Constructs a {@code Ronaldo} application instance.
+     * Initializes storage, loads existing tasks, sets up input reading,
+     * and displays a greeting message.
+     */
     public Ronaldo() {
         this.storage = new Storage();
         this.scanner = new Scanner(System.in);
@@ -24,6 +42,12 @@ public class Ronaldo {
         ui.showGreeting();
     }
 
+    /**
+     * Reads and processes user input until the "bye" command is entered.
+     * Parses commands, executes the corresponding actions,
+     * updates storage, and interacts with the UI.
+     * Handles exceptions by displaying error messages through the UI.
+     */
     public void readInput() {
         String input = "";
         while (!input.equals("bye")) {
@@ -117,8 +141,14 @@ public class Ronaldo {
         }
     }
 
+    /**
+     * Starts the Ronaldo application.
+     *
+     * @param args command-line arguments (not used).
+     */
     public static void main(String[] args) {
         Ronaldo ronaldo = new Ronaldo();
         ronaldo.readInput();
     }
 }
+
