@@ -4,11 +4,14 @@ import java.util.Scanner;
 
 import ronaldo.task.Task;
 import ronaldo.task.TaskList;
-import ronaldo.storage.Storage;
-import ronaldo.parser.Parser;
 import ronaldo.task.Deadline;
 import ronaldo.task.Event;
 import ronaldo.task.ToDos;
+
+import ronaldo.storage.Storage;
+
+import ronaldo.parser.Parser;
+
 
 /**
  * The main class for the Ronaldo task manager application.

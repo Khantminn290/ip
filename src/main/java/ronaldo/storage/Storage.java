@@ -10,6 +10,7 @@ import ronaldo.task.Task;
 import ronaldo.task.Deadline;
 import ronaldo.task.Event;
 import ronaldo.task.ToDos;
+import ronaldo.ui.RonaldoException;
 
 /**
  * Handles persistent storage of tasks for the Ronaldo task manager.
@@ -51,11 +52,11 @@ public class Storage {
      *
      * @param line the string representation of the task to be stored.
      */
-    public void writeTask(String line) {
+    public void writeTask(String line) throws RonaldoException {
         try (FileWriter writer = new FileWriter(this.file.toFile(), true)) {
             writer.write(line + System.lineSeparator());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RonaldoException("Error writing task to files.");
         }
     }
 
@@ -64,13 +65,13 @@ public class Storage {
      *
      * @param index the zero-based index of the task to delete.
      */
-    public void deleteTask(int index) {
+    public void deleteTask(int index) throws RonaldoException{
         try {
             ArrayList<String> lines = new ArrayList<>(Files.readAllLines(file));
             lines.remove(index);
             Files.write(file, lines);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RonaldoException("Error deleting task from files.");
         }
     }
 
