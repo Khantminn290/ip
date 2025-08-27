@@ -1,5 +1,7 @@
 package ronaldo.ui;
 
+import java.util.ArrayList;
+
 import ronaldo.task.Task;
 
 /**
@@ -90,6 +92,25 @@ public class Ui {
     public void showTaskList(String tasks) {
         String message = "Here are the tasks in your list:\n" + tasks;
         System.out.println(encase(message));
+    }
+
+    /**
+     * Displays matching tasks found by a search keyword.
+     *
+     * @param matchingTasks the list of tasks that match the search criteria.
+     */
+    public void showMatchingTasks(ArrayList<Task> matchingTasks) {
+        if (matchingTasks.isEmpty()) {
+            String message = "No matching tasks found in your list.";
+            System.out.println(encase(message));
+        } else {
+            StringBuilder tasksBuilder = new StringBuilder();
+            tasksBuilder.append("Here are the matching tasks in your list:\n");
+            for (int i = 0; i < matchingTasks.size(); i++) {
+                tasksBuilder.append(" ").append(i + 1).append(".").append(matchingTasks.get(i)).append("\n");
+            }
+            System.out.println(encase(tasksBuilder.toString().trim()));
+        }
     }
 
     /**

@@ -1,5 +1,4 @@
-T | false | hi
-T | false | Hi
-T | false | hi
-T | false | watch football
-E | false | concert | monday 3pm-8pm
+T | false | read book
+D | false | deadline return book | 2019-08-25 1800
+T | false | talk to girlfriend
+D | false | deadline girlfriend | 2025-08-28 1800
