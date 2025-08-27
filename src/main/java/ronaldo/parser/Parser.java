@@ -26,7 +26,10 @@ public class Parser {
             return Command.TODO;
         } else if (input.startsWith("delete")) {
             return Command.DELETE;
-        } else {
+        } else if (input.startsWith("find")) {
+            return Command.FIND;
+        }
+        else {
             return Command.INVALID;
         }
     }

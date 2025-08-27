@@ -1,5 +1,6 @@
 package ronaldo.ui;
 
+import java.util.ArrayList;
 import java.util.Scanner;
 
 import ronaldo.task.Task;
@@ -83,11 +84,21 @@ public class Ronaldo {
 
                 case DEADLINE: {
                     String[] parts = input.split(" /by ");
-                    String description = parts[0].replaceFirst("deadline\\s+", "").trim();
+                    String description = parts[0];
                     if (description.isBlank()) {
                         throw new EmptyStringException();
                     }
-                    String by = parts[1].trim();
+                    String by = parts[1];
+
+                    // Check date and time format yyyy-MM-dd HH:mm
+                    try {
+                        java.time.format.DateTimeFormatter formatter =
+                                java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
+                        java.time.LocalDateTime.parse(by, formatter);
+                    } catch (java.time.format.DateTimeParseException e) {
+                        throw new InvalidDateFormatException();
+                    }
+
                     Deadline deadline = new Deadline(description, by);
                     taskList.addTask(deadline);
                     String written_format = String.format("D | %s | %s | %s", deadline.isDone(), description, by);
@@ -130,6 +141,16 @@ public class Ronaldo {
                     Task deletedTask = taskList.deleteTask(number);
                     ui.showDeleteTask(deletedTask, taskList.size());
                     storage.deleteTask(number);
+                    break;
+                }
+
+                case FIND: {
+                    String keyword = input.substring(5).trim(); // extract after "find "
+                    if (keyword.isEmpty()) {
+                        throw new EmptyStringException();
+                    }
+                    ArrayList<Task> matchingTasks = taskList.findTasks(keyword);
+                    ui.showMatchingTasks(matchingTasks);
                     break;
                 }
 

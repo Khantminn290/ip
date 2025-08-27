@@ -9,5 +9,6 @@ public enum Command {
     TODO,
     DELETE,
     BYE,
+    FIND,
     INVALID;
 }
