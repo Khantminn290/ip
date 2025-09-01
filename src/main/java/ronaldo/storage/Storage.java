@@ -6,9 +6,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-import ronaldo.task.Task;
 import ronaldo.task.Deadline;
 import ronaldo.task.Event;
+import ronaldo.task.Task;
 import ronaldo.task.ToDos;
 import ronaldo.ui.RonaldoException;
 
@@ -30,7 +30,7 @@ public class Storage {
      * Ensures that the storage folder and file are created if they do not exist.
      */
     public Storage() {
-        this.folder = Path.of("./src/main/java/data");
+        this.folder = Path.of("./data");
         this.file = folder.resolve("ronaldo.txt");
 
         try {
@@ -65,7 +65,7 @@ public class Storage {
      *
      * @param index the zero-based index of the task to delete.
      */
-    public void deleteTask(int index) throws RonaldoException{
+    public void deleteTask(int index) throws RonaldoException {
         try {
             ArrayList<String> lines = new ArrayList<>(Files.readAllLines(file));
             lines.remove(index);
