@@ -13,7 +13,7 @@ import ronaldo.task.Deadline;
 import ronaldo.task.Event;
 import ronaldo.task.Task;
 import ronaldo.task.TaskList;
-import ronaldo.task.ToDos;
+import ronaldo.task.ToDo;
 
 /**
  * The main class for the Ronaldo task manager application.
@@ -62,107 +62,137 @@ public class Ronaldo {
 
                 switch (command) {
                 case BYE:
-                    this.ui.showFarewell();
+                    handleBye();
                     return;
-
                 case LIST:
-                    this.ui.showTaskList(this.taskList.listTasks());
+                    handleList();
                     break;
-
-                case MARK: {
-                    int number = Integer.parseInt(input.split(" ")[1]) - 1;
-                    taskList.markTask(number);
-                    ui.showMarkedTask(taskList.getTask(number));
+                case MARK:
+                    handleMark(input);
                     break;
-                }
-
-                case UNMARK: {
-                    int number = Integer.parseInt(input.split(" ")[1]) - 1;
-                    taskList.unmarkTask(number);
-                    ui.showUnmarkedTask(taskList.getTask(number));
+                case UNMARK:
+                    handleUnmark(input);
                     break;
-                }
-
-                case DEADLINE: {
-                    String[] parts = input.split(" /by ");
-                    String description = parts[0];
-                    if (description.isBlank()) {
-                        throw new EmptyStringException();
-                    }
-                    String by = parts[1];
-
-                    // Check date and time format yyyy-MM-dd HHmm
-                    try {
-                        java.time.format.DateTimeFormatter formatter =
-                                java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
-                        java.time.LocalDateTime.parse(by, formatter);
-                    } catch (java.time.format.DateTimeParseException e) {
-                        throw new InvalidDateFormatException();
-                    }
-
-                    Deadline deadline = new Deadline(description, by);
-                    taskList.addTask(deadline);
-                    String writtenFormat = String.format("D | %s | %s | %s", deadline.isDone(), description, by);
-                    storage.writeTask(writtenFormat);
-                    ui.showAddTask(deadline, taskList.size());
+                case DEADLINE:
+                    handleDeadline(input);
                     break;
-                }
-
-                case EVENT: {
-                    String[] parts = input.split("/from|/to");
-                    String description = parts[0].replaceFirst("event\\s+", "").trim();
-                    if (description.isBlank()) {
-                        throw new EmptyStringException();
-                    }
-                    String from = parts[1].trim();
-                    String to = parts[2].trim();
-                    Event event = new Event(description, from, to);
-                    taskList.addTask(event);
-                    String writtenFormat = String.format("E | %s | %s | %s-%s", event.isDone(), description, from, to);
-                    storage.writeTask(writtenFormat);
-                    ui.showAddTask(event, taskList.size());
+                case EVENT:
+                    handleEvent(input);
                     break;
-                }
-
-                case TODO: {
-                    String description = input.split(" ", 2)[1].trim();
-                    if (description.isBlank()) {
-                        throw new EmptyStringException();
-                    }
-                    ToDos toDo = new ToDos(description);
-                    taskList.addTask(toDo);
-                    String writtenFormat = String.format("T | %s | %s", toDo.isDone(), description);
-                    storage.writeTask(writtenFormat);
-                    ui.showAddTask(toDo, taskList.size());
+                case TODO:
+                    handleTodo(input);
                     break;
-                }
-
-                case DELETE: {
-                    int number = Integer.parseInt(input.split(" ")[1]) - 1;
-                    Task deletedTask = taskList.deleteTask(number);
-                    ui.showDeleteTask(deletedTask, taskList.size());
-                    storage.deleteTask(number);
+                case DELETE:
+                    handleDelete(input);
                     break;
-                }
-
-                case FIND: {
-                    String keyword = input.substring(5).trim(); // extract after "find "
-                    if (keyword.isEmpty()) {
-                        throw new EmptyStringException();
-                    }
-                    ArrayList<Task> matchingTasks = taskList.findTasks(keyword);
-                    ui.showMatchingTasks(matchingTasks);
+                case FIND:
+                    handleFind(input);
                     break;
-                }
-
                 case INVALID:
                 default:
                     throw new InvalidInputException();
                 }
-
             } catch (RonaldoException r) {
                 ui.showError(r.getMessage());
             }
+        }
+    }
+
+    // Command - "Bye"
+    private void handleBye() {
+        this.ui.showFarewell();
+    }
+
+    // Command - "List"
+    private void handleList() {
+        this.ui.showTaskList(this.taskList.listTasks());
+    }
+
+    // Command - "Unmark"
+    private void handleMark(String input) throws RonaldoException {
+        int number = Integer.parseInt(input.split(" ")[1]) - 1;
+        taskList.markTask(number);
+        ui.showMarkedTask(taskList.getTask(number));
+    }
+
+    // Command - "Mark"
+    private void handleUnmark(String input) throws RonaldoException {
+        int number = Integer.parseInt(input.split(" ")[1]) - 1;
+        taskList.unmarkTask(number);
+        ui.showUnmarkedTask(taskList.getTask(number));
+    }
+
+    // Command - "Deadline"
+    private void handleDeadline(String input) throws RonaldoException {
+        String[] parts = input.split(" /by ");
+        String description = parts[0];
+        if (description.isBlank()) {
+            throw new EmptyStringException();
+        }
+        String by = parts[1];
+
+        validateDateTimeFormat(by);
+
+        Deadline deadline = new Deadline(description, by);
+        addTaskWithStorage(deadline, String.format("D | %s | %s | %s",
+                deadline.isDone(), description, by));
+    }
+
+    // Command - "Event"
+    private void handleEvent(String input) throws RonaldoException {
+        String[] parts = input.split("/from|/to");
+        String description = parts[0].replaceFirst("event\\s+", "").trim();
+        if (description.isBlank()) {
+            throw new EmptyStringException();
+        }
+        String from = parts[1].trim();
+        String to = parts[2].trim();
+        Event event = new Event(description, from, to);
+        addTaskWithStorage(event, String.format("E | %s | %s | %s-%s",
+                event.isDone(), description, from, to));
+    }
+
+    // Command - "Todo"
+    private void handleTodo(String input) throws RonaldoException {
+        String description = input.split(" ", 2)[1].trim();
+        if (description.isBlank()) {
+            throw new EmptyStringException();
+        }
+        ToDo toDo = new ToDo(description);
+        addTaskWithStorage(toDo, String.format("T | %s | %s", toDo.isDone(), description));
+    }
+
+    // Command - "Delete"
+    private void handleDelete(String input) throws RonaldoException {
+        int number = Integer.parseInt(input.split(" ")[1]) - 1;
+        Task deletedTask = taskList.deleteTask(number);
+        ui.showDeleteTask(deletedTask, taskList.size());
+        storage.deleteTask(number);
+    }
+
+    // Command - "Find"
+    private void handleFind(String input) throws RonaldoException {
+        String keyword = input.substring(5).trim();
+        if (keyword.isEmpty()) {
+            throw new EmptyStringException();
+        }
+        ArrayList<Task> matchingTasks = taskList.findTasks(keyword);
+        ui.showMatchingTasks(matchingTasks);
+    }
+
+    private void addTaskWithStorage (Task task, String storageFormat) throws RonaldoException {
+        taskList.addTask(task);
+        storage.writeTask(storageFormat);
+        ui.showAddTask(task, taskList.size());
+    }
+
+    private void validateDateTimeFormat(String dateTime) throws InvalidDateFormatException {
+        try {
+            java.time.format.DateTimeFormatter formatter =
+                    java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
+            java.time.LocalDateTime.parse(dateTime, formatter);
+        } catch (java.time.format.DateTimeParseException e) {
+            throw new InvalidDateFormatException();
         }
     }
 
@@ -244,7 +274,7 @@ public class Ronaldo {
                 if (description.isBlank()) {
                     throw new EmptyStringException();
                 }
-                ToDos toDo = new ToDos(description);
+                ToDo toDo = new ToDo(description);
                 taskList.addTask(toDo);
                 String writtenFormat = String.format("T | %s | %s", toDo.isDone(), description);
                 storage.writeTask(writtenFormat);
@@ -297,7 +327,7 @@ public class Ronaldo {
      * @param args command-line arguments (not used).
      */
     public static void main(String[] args) {
-        // Ronaldo ronaldo = new Ronaldo();
-        // ronaldo.readInput();
+        Ronaldo ronaldo = new Ronaldo();
+        ronaldo.readInput();
     }
 }
