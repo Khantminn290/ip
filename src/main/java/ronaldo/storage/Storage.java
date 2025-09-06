@@ -92,13 +92,13 @@ public class Storage {
                         Task task = null;
 
                         switch (type) {
-                        case "Todo":
+                        case "T":
                             task = new ToDo(parts[2]);
                             break;
-                        case "Deadline":
+                        case "D":
                             task = new Deadline(parts[2], parts[3]);
                             break;
-                        case "Event":
+                        case "E":
                             String[] time = parts[3].split("-");
                             task = new Event(parts[2], time[0], time[1]);
                             break;

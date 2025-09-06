@@ -25,6 +25,14 @@ public class Event extends Task {
         this.to = to;
     }
 
+    public String getFrom() {
+        return this.from;
+    }
+
+    public String getTo() {
+        return this.to;
+    }
+
     /**
      * Returns the string representation of the Event task.
      * This includes a "[E]" prefix and shows the time range of the event.
