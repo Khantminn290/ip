@@ -297,7 +297,7 @@ public class Ronaldo {
      * @param args command-line arguments (not used).
      */
     public static void main(String[] args) {
-        // Ronaldo ronaldo = new Ronaldo();
-        // ronaldo.readInput();
+        Ronaldo ronaldo = new Ronaldo();
+        ronaldo.readInput();
     }
 }
