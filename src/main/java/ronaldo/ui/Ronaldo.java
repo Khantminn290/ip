@@ -13,7 +13,7 @@ import ronaldo.task.Deadline;
 import ronaldo.task.Event;
 import ronaldo.task.Task;
 import ronaldo.task.TaskList;
-import ronaldo.task.ToDos;
+import ronaldo.task.ToDo;
 
 /**
  * The main class for the Ronaldo task manager application.
@@ -142,7 +142,7 @@ public class Ronaldo {
                     if (description.isBlank()) {
                         throw new EmptyStringException();
                     }
-                    ToDos toDo = new ToDos(description);
+                    ToDo toDo = new ToDo(description);
                     assert toDo != null;
                     taskList.addTask(toDo);
                     String writtenFormat = String.format("T | %s | %s", toDo.isDone(), description);
@@ -276,7 +276,7 @@ public class Ronaldo {
                 if (description.isBlank()) {
                     throw new EmptyStringException();
                 }
-                ToDos toDo = new ToDos(description);
+                ToDo toDo = new ToDo(description);
                 assert toDo != null;
                 taskList.addTask(toDo);
                 String writtenFormat = String.format("T | %s | %s", toDo.isDone(), description);
