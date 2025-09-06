@@ -14,7 +14,6 @@ import ronaldo.task.Event;
 import ronaldo.task.Task;
 import ronaldo.task.TaskList;
 import ronaldo.task.ToDo;
-import ronaldo.task.ToDo;
 
 /**
  * The main class for the Ronaldo task manager application.
