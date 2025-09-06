@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import ronaldo.task.Deadline;
 import ronaldo.task.Event;
 import ronaldo.task.Task;
-import ronaldo.task.ToDos;
+import ronaldo.task.ToDo;
 import ronaldo.exceptions.RonaldoException;
 
 /**
@@ -92,7 +92,7 @@ public class Storage {
 
                 switch (type) {
                 case "T":
-                    ToDos todo = new ToDos(parts[2]);
+                    ToDo todo = new ToDo(parts[2]);
                     if (isDone) {
                         todo.markAsDone();
                     }
