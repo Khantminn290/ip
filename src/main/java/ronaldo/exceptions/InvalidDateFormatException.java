@@ -1,4 +1,4 @@
-package ronaldo.ui;
+package ronaldo.exceptions;
 
 /**
  * Exception thrown when the input date format is invalid.

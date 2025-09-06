@@ -10,7 +10,7 @@ import ronaldo.task.Deadline;
 import ronaldo.task.Event;
 import ronaldo.task.Task;
 import ronaldo.task.ToDos;
-import ronaldo.ui.RonaldoException;
+import ronaldo.exceptions.RonaldoException;
 
 /**
  * Handles persistent storage of tasks for the Ronaldo task manager.

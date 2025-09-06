@@ -52,7 +52,7 @@ application {
 }
 
 shadowJar {
-    archiveFileName = 'ronaldo.jar'
+    archiveFileName = 'ronaldov2.jar'
     archiveClassifier = null
 }
 

@@ -1,4 +1,4 @@
-package ronaldo.ui;
+package ronaldo.exceptions;
 
 /**
  * Base exception class for all exceptions in the Ronaldo application.

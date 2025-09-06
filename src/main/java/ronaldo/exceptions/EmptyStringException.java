@@ -1,4 +1,4 @@
-package ronaldo.ui;
+package ronaldo.exceptions;
 
 /**
  * Exception thrown when a task description is empty.
