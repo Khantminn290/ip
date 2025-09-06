@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import ronaldo.task.Deadline;
 import ronaldo.task.Event;
 import ronaldo.task.Task;
-import ronaldo.task.ToDos;
+import ronaldo.task.ToDo;
 import ronaldo.exceptions.RonaldoException;
 
 /**
@@ -93,7 +93,7 @@ public class Storage {
 
                         switch (type) {
                         case "Todo":
-                            task = new ToDos(parts[2]);
+                            task = new ToDo(parts[2]);
                             break;
                         case "Deadline":
                             task = new Deadline(parts[2], parts[3]);
