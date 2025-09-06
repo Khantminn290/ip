@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import ronaldo.task.Deadline;
 import ronaldo.task.Event;
@@ -82,48 +83,41 @@ public class Storage {
      * @return a list of tasks loaded from the file. Returns an empty list if the file is empty or an error occurs.
      */
     public ArrayList<Task> load() {
-        ArrayList<Task> tasks = new ArrayList<>();
         try {
-            ArrayList<String> lines = new ArrayList<>(Files.readAllLines(file));
-            for (String line : lines) {
-                String[] parts = line.split(" \\| ");
-                String type = parts[0];
-                boolean isDone = Boolean.parseBoolean(parts[1]);
+            return Files.readAllLines(file).stream()
+                    .map(line -> {
+                        String[] parts = line.split(" \\| ");
+                        String type = parts[0];
+                        boolean isDone = Boolean.parseBoolean(parts[1]);
+                        Task task = null;
 
-                switch (type) {
-                case "T":
-                    ToDo todo = new ToDo(parts[2]);
-                    if (isDone) {
-                        todo.markAsDone();
-                    }
-                    tasks.add(todo);
-                    break;
+                        switch (type) {
+                        case "Todo":
+                            task = new ToDo(parts[2]);
+                            break;
+                        case "Deadline":
+                            task = new Deadline(parts[2], parts[3]);
+                            break;
+                        case "Event":
+                            String[] time = parts[3].split("-");
+                            task = new Event(parts[2], time[0], time[1]);
+                            break;
+                        default:
+                            System.out.println("Unknown task type: " + type);
+                        }
 
-                case "D":
-                    Deadline deadline = new Deadline(parts[2], parts[3]);
-                    if (isDone) {
-                        deadline.markAsDone();
-                    }
-                    tasks.add(deadline);
-                    break;
-
-                case "E":
-                    String[] time = parts[3].split("-");
-                    Event event = new Event(parts[2], time[0], time[1]);
-                    if (isDone) {
-                        event.markAsDone();
-                    }
-                    tasks.add(event);
-                    break;
-
-                default:
-                    System.out.println("Unknown task type: " + type);
-                }
-            }
+                        if (task != null && isDone) {
+                            task.markAsDone();
+                        }
+                        return task;
+                    })
+                    .filter(task -> task != null) // drop unknown types
+                    .collect(Collectors.toCollection(ArrayList::new));
         } catch (IOException e) {
             e.printStackTrace();
+            return new ArrayList<>();
         }
-        return tasks;
     }
+
 }
 
