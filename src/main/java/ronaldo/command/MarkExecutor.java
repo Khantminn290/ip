@@ -16,7 +16,7 @@ public class MarkExecutor implements CommandExecutor {
     }
 
     @Override
-    public void execute(TaskList taskList, Storage storage, Ui ui) throws RonaldoException {
+    public String execute(TaskList taskList, Storage storage, Ui ui) throws RonaldoException {
         // Validate the index, Guard
         if (index < 0 || index >= taskList.size()) {
             throw new InvalidTaskNumberException();
@@ -26,10 +26,12 @@ public class MarkExecutor implements CommandExecutor {
             taskList.markTask(index);
             storage.markTask(index);
             ui.showMarkedTask(taskList.getTask(index));
+            return "Nice! I've marked this task as done:\n " + taskList.getTask(index);
         } else {
             taskList.unmarkTask(index);
             storage.unmarkTask(index);
             ui.showUnmarkedTask(taskList.getTask(index));
+            return "OK, I've marked this task as not done yet:\n" + taskList.getTask(index);
         }
     }
 }

@@ -2,11 +2,14 @@ package ronaldo.parser;
 
 import java.util.ArrayList;
 
+import ronaldo.command.ByeExecutor;
 import ronaldo.command.Command;
 import ronaldo.command.CommandExecutor;
 import ronaldo.command.DeadlineExecutor;
 import ronaldo.command.DeleteExecutor;
 import ronaldo.command.EventExecutor;
+import ronaldo.command.FindExecutor;
+import ronaldo.command.ListExecutor;
 import ronaldo.command.MarkExecutor;
 import ronaldo.command.TodoExecutor;
 import ronaldo.exceptions.EmptyStringException;
@@ -22,9 +25,9 @@ public class Parser {
 
     public static CommandExecutor parse(String input) throws RonaldoException {
         if (input.equals("bye")) {
-            return (taskList, storage, ui) -> ui.showFarewell();
+            return new ByeExecutor();
         } else if (input.equals("list")) {
-            return (taskList, storage, ui) -> ui.showTaskList(taskList.listTasks());
+            return new ListExecutor();
         } else if (input.startsWith("mark ")) {
             return parseMark(input, true);
         } else if (input.startsWith("unmark ")) {
@@ -134,10 +137,7 @@ public class Parser {
             throw new EmptyStringException();
         }
 
-        return (taskList, storage, ui) -> {
-            ArrayList<Task> matchingTasks = taskList.findTasks(keyword);
-            ui.showMatchingTasks(matchingTasks);
-        };
+        return new FindExecutor(keyword);
     }
 
     public static Command parse2(String input) {

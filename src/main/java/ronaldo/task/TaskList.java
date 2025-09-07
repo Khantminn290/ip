@@ -1,11 +1,7 @@
 package ronaldo.task;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Collectors;
-
-import ronaldo.exceptions.InvalidTaskNumberException;
-import ronaldo.exceptions.RonaldoException;
 
 /**
  * Represents a list of tasks and provides operations to manage them.

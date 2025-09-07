@@ -14,11 +14,14 @@ public class TodoExecutor implements CommandExecutor {
     }
 
     @Override
-    public void execute(TaskList taskList, Storage storage, Ui ui) throws RonaldoException {
+    public String execute(TaskList taskList, Storage storage, Ui ui) throws RonaldoException {
         ToDo toDo = new ToDo(description);
         taskList.addTask(toDo);
         String writtenFormat = String.format("T | %s | %s", toDo.isDone(), description);
         storage.writeTask(writtenFormat);
         ui.showAddTask(toDo, taskList.size());
+        String message = "Got it. I've added this task:\n  " + toDo
+                + String.format("\nNow you have %d tasks in the list.", taskList.size());
+        return message;
     }
 }

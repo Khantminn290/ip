@@ -18,12 +18,16 @@ public class DeadlineExecutor implements CommandExecutor {
     }
 
     @Override
-    public void execute(TaskList taskList, Storage storage, Ui ui) throws RonaldoException {
+    public String execute(TaskList taskList, Storage storage, Ui ui) throws RonaldoException {
         Deadline deadline = new Deadline(description, by);
         taskList.addTask(deadline);
         String writtenFormat = String.format("D | %s | %s | %s",
                 deadline.isDone(), description, deadline.getBy());
         storage.writeTask(writtenFormat);
         ui.showAddTask(deadline, taskList.size());
+
+        String message = "Got it. I've added this task:\n  " + deadline
+                + String.format("\nNow you have %d tasks in the list.", taskList.size());
+        return message;
     }
 }

@@ -32,7 +32,7 @@ public class DeleteExecutor implements CommandExecutor {
      * @throws InvalidTaskNumberException if the index is invalid
      */
     @Override
-    public void execute(TaskList taskList, Storage storage, Ui ui) throws RonaldoException {
+    public String execute(TaskList taskList, Storage storage, Ui ui) throws RonaldoException {
         // Validate the index
         if (index < 0 || index >= taskList.size()) {
             throw new InvalidTaskNumberException();
@@ -44,5 +44,9 @@ public class DeleteExecutor implements CommandExecutor {
 
         // Show confirmation message
         ui.showDeleteTask(deletedTask, taskList.size());
+
+        String message = "Noted. I've removed this task:\n  " + deletedTask
+                + String.format("\nNow you have %d tasks in the list.", taskList.size());
+        return message;
     }
 }
