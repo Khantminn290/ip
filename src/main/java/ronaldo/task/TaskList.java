@@ -29,11 +29,11 @@ public class TaskList {
         tasks.add(task);
     }
 
-    public Task deleteTask(int index) throws IndexOutOfBoundsException {
+    public Task deleteTask(int index) {
         return tasks.remove(index);
     }
 
-    public Task getTask(int index) throws IndexOutOfBoundsException {
+    public Task getTask(int index) {
         return tasks.get(index);
     }
 
@@ -45,11 +45,11 @@ public class TaskList {
         return tasks;
     }
 
-    public void markTask(int index) throws RonaldoException {
+    public void markTask(int index) {
         tasks.get(index).markAsDone();
     }
 
-    public void unmarkTask(int index) throws RonaldoException {
+    public void unmarkTask(int index) {
         tasks.get(index).unmark();
     }
 

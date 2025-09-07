@@ -46,7 +46,7 @@ public class Deadline extends Task {
 
             this.formattedBy = this.date.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
                     + " "
-                    + this.time.format(DateTimeFormatter.ofPattern("HH:mm"));
+                    + this.time.format(DateTimeFormatter.ofPattern("h:mm a"));
         } catch (Exception e) {
             throw new IllegalArgumentException(
                     "Invalid deadline format. Expected format: yyyy-MM-dd HHmm", e
@@ -64,28 +64,10 @@ public class Deadline extends Task {
     }
 
     /**
-     * Returns the date component of the deadline.
-     *
-     * @return The {@link LocalDate} representing the due date.
-     */
-    public LocalDate getDate() {
-        return date;
-    }
-
-    /**
-     * Returns the time component of the deadline.
-     *
-     * @return The {@link LocalTime} representing the due time.
-     */
-    public LocalTime getTime() {
-        return time;
-    }
-
-    /**
      * Returns a string representation of the deadline task.
      *
      * @return A formatted string in the format:
-     *         {@code [D]<TaskString>(by: yyyy-MM-dd HHmm)}.
+     *         {@code [D]<TaskString>(by: dd-MM-yyyy HHmm)}.
      */
     @Override
     public String toString() {
