@@ -2,9 +2,9 @@ package ronaldo.command;
 
 import ronaldo.exceptions.RonaldoException;
 import ronaldo.storage.Storage;
+import ronaldo.task.Deadline;
 import ronaldo.task.TaskList;
 import ronaldo.ui.Ui;
-import ronaldo.task.Deadline;
 
 /**
  * Executes the "deadline" command to add a new Deadline task to the task list.

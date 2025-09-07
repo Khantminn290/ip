@@ -2,9 +2,9 @@ package ronaldo.command;
 
 import ronaldo.exceptions.RonaldoException;
 import ronaldo.storage.Storage;
+import ronaldo.task.Event;
 import ronaldo.task.TaskList;
 import ronaldo.ui.Ui;
-import ronaldo.task.Event;
 
 /**
  * Executes the "event" command to add a new Event task to the task list.
