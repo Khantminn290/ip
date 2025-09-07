@@ -77,10 +77,19 @@ public class Storage {
     }
 
     /**
-     * Loads tasks from the storage file into memory.
-     * Reconstructs task objects (ToDos, Deadlines, Events) from their stored string representations.
+     * Loads all tasks from the storage file into memory.
+     * <p>
+     * Each line in the file is parsed and mapped into a corresponding
+     * {@link Task} object using Java Streams. Supported task types include:
+     * <ul>
+     *   <li>{@link ToDo} — represented by type "T"</li>
+     *   <li>{@link Deadline} — represented by type "D"</li>
+     *   <li>{@link Event} — represented by type "E"</li>
+     * </ul>
+     * Invalid or unknown task types are ignored.
      *
-     * @return a list of tasks loaded from the file. Returns an empty list if the file is empty or an error occurs.
+     * @return an {@link ArrayList} containing the loaded tasks;
+     *         returns an empty list if the file is empty or an I/O error occurs
      */
     public ArrayList<Task> load() {
         try {
