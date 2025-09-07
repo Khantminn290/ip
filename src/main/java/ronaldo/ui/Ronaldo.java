@@ -7,6 +7,7 @@ import ronaldo.command.Command;
 import ronaldo.exceptions.EmptyStringException;
 import ronaldo.exceptions.InvalidDateFormatException;
 import ronaldo.exceptions.InvalidDeadlineTaskException;
+import ronaldo.exceptions.InvalidEventTaskException;
 import ronaldo.exceptions.InvalidInputException;
 import ronaldo.exceptions.InvalidTaskNumberException;
 import ronaldo.exceptions.RonaldoException;
@@ -75,12 +76,11 @@ public class Ronaldo {
                     int number = Integer.parseInt(parts[1]) - 1;
                     if (number < 0 || number >= taskList.size()) {
                         throw new InvalidTaskNumberException();
-                    } else {
-                        taskList.markTask(number);
-                        storage.markTask(number);
-                        ui.showMarkedTask(taskList.getTask(number));
-                        break;
                     }
+                    taskList.markTask(number);
+                    storage.markTask(number);
+                    ui.showMarkedTask(taskList.getTask(number));
+                    break;
                 }
 
                 case UNMARK: {
@@ -88,12 +88,11 @@ public class Ronaldo {
                     int number = Integer.parseInt(parts[1]) - 1;
                     if (number < 0 || number >= taskList.size()) {
                         throw new InvalidTaskNumberException();
-                    } else {
-                        taskList.unmarkTask(number);
-                        storage.unmarkTask(number);
-                        ui.showUnmarkedTask(taskList.getTask(number));
-                        break;
                     }
+                    taskList.unmarkTask(number);
+                    storage.unmarkTask(number);
+                    ui.showUnmarkedTask(taskList.getTask(number));
+                    break;
                 }
 
                 case DEADLINE: {
@@ -127,7 +126,10 @@ public class Ronaldo {
 
                 case EVENT: {
                     String[] parts = input.split("/from|/to");
-                    assert parts.length == 3; // must have description, from, to
+                    if (parts.length != 3) {
+                        throw new InvalidEventTaskException();
+                    } // must have description, from, to
+
                     String description = parts[0].replaceFirst("event\\s+", "").trim();
                     if (description.isBlank()) {
                         throw new EmptyStringException();
@@ -138,7 +140,6 @@ public class Ronaldo {
                     assert !to.isBlank();
 
                     Event event = new Event(description, from, to);
-                    assert event != null;
                     taskList.addTask(event);
                     String writtenFormat = String.format("E | %s | %s | %s-%s", event.isDone(), description, from, to);
                     storage.writeTask(writtenFormat);
@@ -148,7 +149,6 @@ public class Ronaldo {
 
                 case TODO: {
                     String[] parts = input.split(" ", 2);
-                    assert parts.length == 2;
                     String description = parts[1].trim();
                     if (description.isBlank()) {
                         throw new EmptyStringException();
@@ -166,7 +166,9 @@ public class Ronaldo {
                     String[] parts = input.split(" ");
                     assert parts.length > 1;
                     int number = Integer.parseInt(parts[1]) - 1;
-                    assert number >= 0 && number < taskList.size();
+                    if (number < 0 || number >= taskList.size()) {
+                        throw new InvalidTaskNumberException();
+                    }
                     Task deletedTask = taskList.deleteTask(number);
                     ui.showDeleteTask(deletedTask, taskList.size());
                     storage.deleteTask(number);

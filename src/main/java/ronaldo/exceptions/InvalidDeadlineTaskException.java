@@ -9,6 +9,6 @@ public class InvalidDeadlineTaskException extends RonaldoException {
      * Constructs a new InvalidDeadlineException with a default message.
      */
     public InvalidDeadlineTaskException() {
-        super("Input a valid Deadline task - deadline </by time> or I will Han Tam you.");
+        super("Input a valid Deadline task - deadline </by time>");
     }
 }
