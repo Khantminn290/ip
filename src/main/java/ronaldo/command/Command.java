@@ -1,4 +1,4 @@
-package ronaldo.ui;
+package ronaldo.command;
 
 /**
  * Enum representing all possible commands that the user can input

@@ -3,6 +3,7 @@ package ronaldo.ui;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import ronaldo.command.Command;
 import ronaldo.exceptions.EmptyStringException;
 import ronaldo.exceptions.InvalidDateFormatException;
 import ronaldo.exceptions.InvalidInputException;
@@ -48,207 +49,142 @@ public class Ronaldo {
         assert this.ui != null;
     }
 
-    /**
-     * Reads and processes user input in a loop until the "bye" command is entered.
-     * <p>
-     * Input is parsed into a {@link Command} and dispatched to a handler method
-     * that executes the appropriate action (e.g., adding tasks, marking tasks, etc.).
-     */
     public void readInput() {
         String input = "";
         while (!input.equals("bye")) {
             try {
                 input = scanner.nextLine();
-                assert input != null; // input should never be null
+                assert input != null; // input should not be null
 
                 Command command = Parser.parse(input);
-                assert command != null; // parser should always return a valid command
+                assert command != null; // Parser should return a valid command
 
-                // delegate command execution to handler
-                handleCommand(command, input);
+                switch (command) {
+                case BYE:
+                    this.ui.showFarewell();
+                    return;
+
+                case LIST:
+                    this.ui.showTaskList(this.taskList.listTasks());
+                    break;
+
+                case MARK: {
+                    String[] parts = input.split(" ");
+                    assert parts.length > 1; // must have index
+                    int number = Integer.parseInt(parts[1]) - 1;
+                    assert number >= 0 && number < taskList.size();
+                    taskList.markTask(number);
+                    ui.showMarkedTask(taskList.getTask(number));
+                    break;
+                }
+
+                case UNMARK: {
+                    String[] parts = input.split(" ");
+                    assert parts.length > 1;
+                    int number = Integer.parseInt(parts[1]) - 1;
+                    assert number >= 0 && number < taskList.size();
+                    taskList.unmarkTask(number);
+                    ui.showUnmarkedTask(taskList.getTask(number));
+                    break;
+                }
+
+                case DEADLINE: {
+                    String[] parts = input.split(" /by ");
+                    assert parts.length == 2; // must have description and deadline
+                    String description = parts[0];
+                    if (description.isBlank()) {
+                        throw new EmptyStringException();
+                    }
+                    String by = parts[1];
+                    assert !by.isBlank();
+
+                    try {
+                        java.time.format.DateTimeFormatter formatter =
+                                java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
+                        java.time.LocalDateTime.parse(by, formatter);
+                    } catch (java.time.format.DateTimeParseException e) {
+                        throw new InvalidDateFormatException();
+                    }
+
+                    Deadline deadline = new Deadline(description, by);
+                    assert deadline != null;
+                    taskList.addTask(deadline);
+                    String writtenFormat = String.format("D | %s | %s | %s", deadline.isDone(), description, by);
+                    storage.writeTask(writtenFormat);
+                    ui.showAddTask(deadline, taskList.size());
+                    break;
+                }
+
+                case EVENT: {
+                    String[] parts = input.split("/from|/to");
+                    assert parts.length == 3; // must have description, from, to
+                    String description = parts[0].replaceFirst("event\\s+", "").trim();
+                    if (description.isBlank()) {
+                        throw new EmptyStringException();
+                    }
+                    String from = parts[1].trim();
+                    String to = parts[2].trim();
+                    assert !from.isBlank();
+                    assert !to.isBlank();
+
+                    Event event = new Event(description, from, to);
+                    assert event != null;
+                    taskList.addTask(event);
+                    String writtenFormat = String.format("E | %s | %s | %s-%s", event.isDone(), description, from, to);
+                    storage.writeTask(writtenFormat);
+                    ui.showAddTask(event, taskList.size());
+                    break;
+                }
+
+                case TODO: {
+                    String[] parts = input.split(" ", 2);
+                    assert parts.length == 2;
+                    String description = parts[1].trim();
+                    if (description.isBlank()) {
+                        throw new EmptyStringException();
+                    }
+                    ToDo toDo = new ToDo(description);
+                    assert toDo != null;
+                    taskList.addTask(toDo);
+                    String writtenFormat = String.format("T | %s | %s", toDo.isDone(), description);
+                    storage.writeTask(writtenFormat);
+                    ui.showAddTask(toDo, taskList.size());
+                    break;
+                }
+
+                case DELETE: {
+                    String[] parts = input.split(" ");
+                    assert parts.length > 1;
+                    int number = Integer.parseInt(parts[1]) - 1;
+                    assert number >= 0 && number < taskList.size();
+                    Task deletedTask = taskList.deleteTask(number);
+                    ui.showDeleteTask(deletedTask, taskList.size());
+                    storage.deleteTask(number);
+                    break;
+                }
+
+                case FIND: {
+                    String keyword = input.substring(5).trim();
+                    assert keyword != null;
+                    if (keyword.isEmpty()) {
+                        throw new EmptyStringException();
+                    }
+                    ArrayList<Task> matchingTasks = taskList.findTasks(keyword);
+                    assert matchingTasks != null;
+                    ui.showMatchingTasks(matchingTasks);
+                    break;
+                }
+
+                case INVALID:
+                default:
+                    throw new InvalidInputException();
+                }
 
             } catch (RonaldoException r) {
-                // show error message without crashing program
                 ui.showError(r.getMessage());
             }
         }
     }
-
-    /**
-     * Dispatches the parsed {@link Command} to its corresponding handler method.
-     *
-     * @param command the parsed command from the user input
-     * @param input   the raw user input string
-     * @throws RonaldoException if the command is invalid or cannot be executed
-     */
-    private void handleCommand(Command command, String input) throws RonaldoException {
-        switch (command) {
-        case BYE:
-            ui.showFarewell();
-            break;
-
-        case LIST:
-            ui.showTaskList(taskList.listTasks());
-            break;
-
-        case MARK:
-            handleMark(input, true);
-            break;
-
-        case UNMARK:
-            handleMark(input, false);
-            break;
-
-        case DEADLINE:
-            handleDeadline(input);
-            break;
-
-        case EVENT:
-            handleEvent(input);
-            break;
-
-        case TODO:
-            handleTodo(input);
-            break;
-
-        case DELETE:
-            handleDelete(input);
-            break;
-
-        case FIND:
-            handleFind(input);
-            break;
-
-        case INVALID:
-        default:
-            throw new InvalidInputException();
-        }
-    }
-
-    /**
-     * Handles marking or unmarking a task.
-     *
-     * @param input the raw user input containing the task index
-     * @param mark  {@code true} to mark as done, {@code false} to unmark
-     * @throws RonaldoException if the index is invalid or out of range
-     */
-    private void handleMark(String input, boolean mark) throws RonaldoException {
-        String[] parts = input.split(" ");
-        assert parts.length > 1; // must contain index
-        int number = Integer.parseInt(parts[1]) - 1;
-        assert number >= 0 && number < taskList.size();
-
-        if (mark) {
-            taskList.markTask(number);
-            ui.showMarkedTask(taskList.getTask(number));
-        } else {
-            taskList.unmarkTask(number);
-            ui.showUnmarkedTask(taskList.getTask(number));
-        }
-    }
-
-    /**
-     * Handles adding a {@link Deadline} task.
-     *
-     * @param input the raw user input containing description and deadline date/time
-     * @throws RonaldoException if input is invalid or date format is incorrect
-     */
-    private void handleDeadline(String input) throws RonaldoException {
-        String[] parts = input.split(" /by ");
-        assert parts.length == 2; // must contain description and deadline
-        String description = parts[0].replaceFirst("deadline\\s+", "").trim();
-        if (description.isBlank()) throw new EmptyStringException();
-        String by = parts[1].trim();
-        if (by.isBlank()) throw new EmptyStringException();
-
-        // validate date format "yyyy-MM-dd HHmm"
-        try {
-            var formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HHmm");
-            java.time.LocalDateTime.parse(by, formatter);
-        } catch (java.time.format.DateTimeParseException e) {
-            throw new InvalidDateFormatException();
-        }
-
-        Deadline deadline = new Deadline(description, by);
-        taskList.addTask(deadline);
-        // persist to storage
-        storage.writeTask(String.format("D | %s | %s | %s", deadline.isDone(), description, by));
-        ui.showAddTask(deadline, taskList.size());
-    }
-
-    /**
-     * Handles adding an {@link Event} task.
-     *
-     * @param input the raw user input containing description, start, and end times
-     * @throws RonaldoException if input is invalid
-     */
-    private void handleEvent(String input) throws RonaldoException {
-        String[] parts = input.split("/from|/to");
-        assert parts.length == 3; // must contain description, from, and to
-        String description = parts[0].replaceFirst("event\\s+", "").trim();
-        if (description.isBlank()) throw new EmptyStringException();
-
-        String from = parts[1].trim();
-        String to = parts[2].trim();
-        if (from.isBlank() || to.isBlank()) throw new EmptyStringException();
-
-        Event event = new Event(description, from, to);
-        taskList.addTask(event);
-        // persist to storage
-        storage.writeTask(String.format("E | %s | %s | %s-%s", event.isDone(), description, from, to));
-        ui.showAddTask(event, taskList.size());
-    }
-
-    /**
-     * Handles adding a {@link ToDo} task.
-     *
-     * @param input the raw user input containing description
-     * @throws RonaldoException if description is missing or empty
-     */
-    private void handleTodo(String input) throws RonaldoException {
-        String[] parts = input.split(" ", 2);
-        assert parts.length == 2; // must contain keyword and description
-        String description = parts[1].trim();
-        if (description.isBlank()) throw new EmptyStringException();
-
-        ToDo toDo = new ToDo(description);
-        taskList.addTask(toDo);
-        // persist to storage
-        storage.writeTask(String.format("T | %s | %s", toDo.isDone(), description));
-        ui.showAddTask(toDo, taskList.size());
-    }
-
-    /**
-     * Handles deleting a task.
-     *
-     * @param input the raw user input containing the task index
-     * @throws RonaldoException if index is invalid or out of range
-     */
-    private void handleDelete(String input) throws RonaldoException {
-        String[] parts = input.split(" ");
-        assert parts.length > 1; // must contain index
-        int number = Integer.parseInt(parts[1]) - 1;
-        assert number >= 0 && number < taskList.size();
-
-        Task deletedTask = taskList.deleteTask(number);
-        storage.deleteTask(number); // update storage
-        ui.showDeleteTask(deletedTask, taskList.size());
-    }
-
-    /**
-     * Handles finding tasks by keyword.
-     *
-     * @param input the raw user input containing the search keyword
-     * @throws RonaldoException if keyword is missing or empty
-     */
-    private void handleFind(String input) throws RonaldoException {
-        String keyword = input.substring(5).trim(); // extract after "find "
-        if (keyword.isEmpty()) throw new EmptyStringException();
-
-        ArrayList<Task> matchingTasks = taskList.findTasks(keyword);
-        ui.showMatchingTasks(matchingTasks);
-    }
-
 
     public String processInput(String input) {
         assert input != null; // input string should never be null

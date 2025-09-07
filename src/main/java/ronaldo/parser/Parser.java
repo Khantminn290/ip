@@ -1,6 +1,6 @@
 package ronaldo.parser;
 
-import ronaldo.ui.Command;
+import ronaldo.command.Command;
 
 /**
  * Parses raw user input and translates it into a {@link Command}.
