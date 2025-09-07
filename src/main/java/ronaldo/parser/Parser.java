@@ -1,7 +1,5 @@
 package ronaldo.parser;
 
-import java.util.ArrayList;
-
 import ronaldo.command.ByeExecutor;
 import ronaldo.command.Command;
 import ronaldo.command.CommandExecutor;
@@ -19,10 +17,24 @@ import ronaldo.exceptions.InvalidEventTaskException;
 import ronaldo.exceptions.InvalidInputException;
 import ronaldo.exceptions.InvalidTaskNumberException;
 import ronaldo.exceptions.RonaldoException;
-import ronaldo.task.Task;
 
+/**
+ * The {@code Parser} class is responsible for interpreting raw user input
+ * and converting it into executable {@link CommandExecutor} objects.
+ * <p>
+ * It also provides utility methods for parsing specific command types such as
+ * {@code deadline}, {@code event}, {@code todo}, etc., and validates their formats.
+ * </p>
+ */
 public class Parser {
 
+    /**
+     * Parses a raw user input string into a {@link CommandExecutor}.
+     *
+     * @param input the user input string
+     * @return the corresponding {@link CommandExecutor}
+     * @throws RonaldoException if the input is invalid or improperly formatted
+     */
     public static CommandExecutor parse(String input) throws RonaldoException {
         if (input.equals("bye")) {
             return new ByeExecutor();
@@ -47,6 +59,14 @@ public class Parser {
         }
     }
 
+    /**
+     * Parses a mark or unmark command.
+     *
+     * @param input  the raw user input
+     * @param isMark {@code true} if it is a mark command, {@code false} if unmark
+     * @return a {@link MarkExecutor} for the specified task index
+     * @throws RonaldoException if the task number is missing or invalid
+     */
     private static CommandExecutor parseMark(String input, boolean isMark) throws RonaldoException {
         String[] parts = input.split(" ");
         if (parts.length < 2) {
@@ -56,6 +76,14 @@ public class Parser {
         return new MarkExecutor(number, isMark);
     }
 
+    /**
+     * Parses a deadline command with a description and due date.
+     *
+     * @param input the raw user input
+     * @return a {@link DeadlineExecutor} containing the parsed description and due date
+     * @throws RonaldoException if the format is invalid, description is empty,
+     *                          or date format does not match {@code yyyy-MM-dd HHmm}
+     */
     private static CommandExecutor parseDeadline(String input) throws RonaldoException {
         String[] parts = input.split(" /by ");
         if (parts.length != 2) {
@@ -84,6 +112,13 @@ public class Parser {
         return new DeadlineExecutor(description, by);
     }
 
+    /**
+     * Parses an event command with a description, start time, and end time.
+     *
+     * @param input the raw user input
+     * @return an {@link EventExecutor} containing the parsed event details
+     * @throws RonaldoException if the format is invalid or fields are empty
+     */
     private static CommandExecutor parseEvent(String input) throws RonaldoException {
         String[] parts = input.split("/from|/to");
         if (parts.length != 3) {
@@ -104,6 +139,13 @@ public class Parser {
         return new EventExecutor(description, from, to);
     }
 
+    /**
+     * Parses a todo command with a description.
+     *
+     * @param input the raw user input
+     * @return a {@link TodoExecutor} containing the parsed description
+     * @throws RonaldoException if the description is missing or empty
+     */
     private static CommandExecutor parseTodo(String input) throws RonaldoException {
         String[] parts = input.split(" ", 2);
         if (parts.length < 2) {
@@ -118,6 +160,13 @@ public class Parser {
         return new TodoExecutor(description);
     }
 
+    /**
+     * Parses a delete command with a task number.
+     *
+     * @param input the raw user input
+     * @return a {@link DeleteExecutor} for the specified task index
+     * @throws RonaldoException if the task number is missing or invalid
+     */
     private static CommandExecutor parseDelete(String input) throws RonaldoException {
         String[] parts = input.split(" ");
         if (parts.length < 2) {
@@ -127,6 +176,13 @@ public class Parser {
         return new DeleteExecutor(number);
     }
 
+    /**
+     * Parses a find command with a keyword.
+     *
+     * @param input the raw user input
+     * @return a {@link FindExecutor} for the given keyword
+     * @throws RonaldoException if the keyword is missing or empty
+     */
     private static CommandExecutor parseFind(String input) throws RonaldoException {
         if (input.length() <= 5) {
             throw new EmptyStringException();
@@ -140,6 +196,13 @@ public class Parser {
         return new FindExecutor(keyword);
     }
 
+    /**
+     * A simplified parser that categorizes the command type without arguments.
+     *
+     * @param input the raw user input
+     * @return the corresponding {@link Command} enum value,
+     *         or {@link Command#INVALID} if the input does not match a known command
+     */
     public static Command parse2(String input) {
         if (input.equals("bye")) {
             return Command.BYE;

@@ -7,11 +7,11 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+import ronaldo.exceptions.RonaldoException;
 import ronaldo.task.Deadline;
 import ronaldo.task.Event;
 import ronaldo.task.Task;
 import ronaldo.task.ToDo;
-import ronaldo.exceptions.RonaldoException;
 
 /**
  * Handles persistent storage of tasks for the Ronaldo task manager.
@@ -166,7 +166,7 @@ public class Storage {
      * Loads tasks from the storage file into memory.
      * Reconstructs task objects (ToDos, Deadlines, Events) from their stored string representations.
      *
-     * @return an Arraylist of tasks loaded from the file. Returns an empty list if the file is empty or an error occurs.
+     * @return an Arraylist of tasks loaded from the file. Returns an empty list if the file is empty.
      */
     public ArrayList<Task> load() {
         try {

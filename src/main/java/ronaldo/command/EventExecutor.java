@@ -6,17 +6,51 @@ import ronaldo.task.TaskList;
 import ronaldo.ui.Ui;
 import ronaldo.task.Event;
 
+/**
+ * Executes the "event" command to add a new Event task to the task list.
+ * <p>
+ * This class creates an {@link Event} task with the given description, start time, and end time,
+ * adds it to the {@link TaskList}, persists it to {@link Storage}, and displays
+ * a confirmation message via {@link Ui}.
+ * </p>
+ */
 public class EventExecutor implements CommandExecutor {
+
+    /** The description of the event task. */
     private final String description;
+
+    /** The start time of the event. */
     private final String from;
+
+    /** The end time of the event. */
     private final String to;
 
+    /**
+     * Constructs a new {@code EventExecutor} with the specified description, start time, and end time.
+     *
+     * @param description the description of the event
+     * @param from        the start time of the event
+     * @param to          the end time of the event
+     */
     public EventExecutor(String description, String from, String to) {
         this.description = description;
         this.from = from;
         this.to = to;
     }
 
+    /**
+     * Executes the event command by creating and adding the task.
+     * <p>
+     * Adds the new {@link Event} task to the {@link TaskList}, writes it to {@link Storage},
+     * and displays a confirmation message via {@link Ui}.
+     * </p>
+     *
+     * @param taskList the list of tasks to add to
+     * @param storage  the storage instance for persisting the task
+     * @param ui       the UI instance for displaying messages
+     * @return a string message confirming the addition of the task and showing the current task count
+     * @throws RonaldoException if an error occurs during task creation or storage
+     */
     @Override
     public String execute(TaskList taskList, Storage storage, Ui ui) throws RonaldoException {
         Event event = new Event(description, from, to);

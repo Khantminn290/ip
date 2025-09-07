@@ -27,6 +27,14 @@ public class Ronaldo {
     /** The UI component for displaying messages to the user. */
     private Ui ui;
 
+    /**
+     * The main entry point for the Ronaldo task manager application.
+     * <p>
+     * This class is responsible for initializing components such as
+     * {@link TaskList}, {@link Storage}, and {@link Ui}, as well as
+     * handling user input, command parsing, and execution of commands.
+     * </p>
+     */
     public Ronaldo() {
         this.storage = new Storage();
         this.scanner = new Scanner(System.in);
@@ -41,6 +49,13 @@ public class Ronaldo {
         assert this.ui != null;
     }
 
+    /**
+     * Continuously reads user input from the console until the "bye" command is entered.
+     * <p>
+     * Each line of input is parsed into a {@link CommandExecutor}, which is then executed.
+     * Any {@link RonaldoException} encountered will display an error message using {@link Ui}.
+     * </p>
+     */
     public void readInput() {
         String input = "";
         while (!input.equals("bye")) {
@@ -67,6 +82,17 @@ public class Ronaldo {
         }
     }
 
+    /**
+     * Processes a single line of input and executes the corresponding command.
+     * <p>
+     * This method is intended for programmatic use, such as when integrating
+     * the Ronaldo application into a GUI or test harness, rather than interactive use.
+     * </p>
+     *
+     * @param input the raw user input string to be parsed and executed
+     * @return the message returned by the executed command, or an error message
+     *         if the input is invalid or a {@link RonaldoException} occurs
+     */
     public String processInput(String input) {
         try {
             CommandExecutor executor = Parser.parse(input);
