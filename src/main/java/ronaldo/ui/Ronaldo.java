@@ -6,7 +6,9 @@ import java.util.Scanner;
 import ronaldo.command.Command;
 import ronaldo.exceptions.EmptyStringException;
 import ronaldo.exceptions.InvalidDateFormatException;
+import ronaldo.exceptions.InvalidDeadlineTaskException;
 import ronaldo.exceptions.InvalidInputException;
+import ronaldo.exceptions.InvalidTaskNumberException;
 import ronaldo.exceptions.RonaldoException;
 import ronaldo.parser.Parser;
 import ronaldo.storage.Storage;
@@ -70,27 +72,35 @@ public class Ronaldo {
 
                 case MARK: {
                     String[] parts = input.split(" ");
-                    assert parts.length > 1; // must have index
                     int number = Integer.parseInt(parts[1]) - 1;
-                    assert number >= 0 && number < taskList.size();
-                    taskList.markTask(number);
-                    ui.showMarkedTask(taskList.getTask(number));
-                    break;
+                    if (number < 0 || number >= taskList.size()) {
+                        throw new InvalidTaskNumberException();
+                    } else {
+                        taskList.markTask(number);
+                        storage.markTask(number);
+                        ui.showMarkedTask(taskList.getTask(number));
+                        break;
+                    }
                 }
 
                 case UNMARK: {
                     String[] parts = input.split(" ");
-                    assert parts.length > 1;
                     int number = Integer.parseInt(parts[1]) - 1;
-                    assert number >= 0 && number < taskList.size();
-                    taskList.unmarkTask(number);
-                    ui.showUnmarkedTask(taskList.getTask(number));
-                    break;
+                    if (number < 0 || number >= taskList.size()) {
+                        throw new InvalidTaskNumberException();
+                    } else {
+                        taskList.unmarkTask(number);
+                        storage.unmarkTask(number);
+                        ui.showUnmarkedTask(taskList.getTask(number));
+                        break;
+                    }
                 }
 
                 case DEADLINE: {
                     String[] parts = input.split(" /by ");
-                    assert parts.length == 2; // must have description and deadline
+                    if (parts.length != 2) {
+                      throw new InvalidDeadlineTaskException();
+                    } // must have description and deadline
                     String description = parts[0];
                     if (description.isBlank()) {
                         throw new EmptyStringException();
@@ -208,6 +218,7 @@ public class Ronaldo {
                 int number = Integer.parseInt(parts[1]) - 1;
                 assert number >= 0 && number < taskList.size();
                 taskList.markTask(number);
+                storage.markTask(number);
                 return "Nice! I've marked this task as done:\n " + taskList.getTask(number);
             }
 
@@ -217,6 +228,7 @@ public class Ronaldo {
                 int number = Integer.parseInt(parts[1]) - 1;
                 assert number >= 0 && number < taskList.size();
                 taskList.unmarkTask(number);
+                storage.unmarkTask(number);
                 return "OK, I've marked this task as not done yet:\n" + taskList.getTask(number);
             }
 

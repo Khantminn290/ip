@@ -119,6 +119,6 @@ public class Ui {
      * @param errorMessage the message describing the error.
      */
     public void showError(String errorMessage) {
-        System.out.println(encase("Error: " + errorMessage));
+        System.out.println(encase(errorMessage));
     }
 }

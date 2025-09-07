@@ -54,10 +54,8 @@ public class Storage {
      * @param line the string representation of the task to be stored.
      */
     public void writeTask(String line) throws RonaldoException {
-        try {
-            FileWriter writer = new FileWriter(this.file.toFile(), true);
+        try (FileWriter writer = new FileWriter(this.file.toFile(), true)) {
             writer.write(line + System.lineSeparator());
-            writer.close();
         } catch (IOException e) {
             throw new RonaldoException("Error writing task to files.");
         }
@@ -75,6 +73,92 @@ public class Storage {
             Files.write(file, lines);
         } catch (IOException e) {
             throw new RonaldoException("Error deleting task from files.");
+        }
+    }
+
+    /**
+     * Marks a task as done in the storage file by its index.
+     * Updates the boolean value in the second column from false to true.
+     *
+     * @param index the zero-based index of the task to mark as done.
+     * @throws RonaldoException if the index is invalid or an I/O error occurs.
+     */
+    public void markTask(int index) throws RonaldoException {
+        try {
+            // Read all lines from the file
+            ArrayList<String> lines = new ArrayList<>(Files.readAllLines(file));
+
+            // Check if index is valid
+            if (index < 0 || index >= lines.size()) {
+                throw new RonaldoException("Invalid task index: " + index);
+            }
+
+            // Get the specific line to modify
+            String line = lines.get(index);
+            String[] parts = line.split(" \\| ");
+
+            // Check if the line has the expected format
+            if (parts.length < 3) {
+                throw new RonaldoException("Invalid task format at index: " + index);
+            }
+
+            // Update the status from false to true
+            parts[1] = "true";
+
+            // Reconstruct the line
+            String updatedLine = String.join(" | ", parts);
+
+            // Replace the old line with the updated one
+            lines.set(index, updatedLine);
+
+            // Write all lines back to the file
+            Files.write(file, lines);
+
+        } catch (IOException e) {
+            throw new RonaldoException("Error marking task in file: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Unmarks a task (sets it as not done) in the storage file by its index.
+     * Updates the boolean value in the second column from true to false.
+     *
+     * @param index the zero-based index of the task to unmark.
+     * @throws RonaldoException if the index is invalid or an I/O error occurs.
+     */
+    public void unmarkTask(int index) throws RonaldoException {
+        try {
+            // Read all lines from the file
+            ArrayList<String> lines = new ArrayList<>(Files.readAllLines(file));
+
+            // Check if index is valid
+            if (index < 0 || index >= lines.size()) {
+                throw new RonaldoException("Invalid task index: " + index);
+            }
+
+            // Get the specific line to modify
+            String line = lines.get(index);
+            String[] parts = line.split(" \\| ");
+
+            // Check if the line has the expected format
+            if (parts.length < 3) {
+                throw new RonaldoException("Invalid task format at index: " + index);
+            }
+
+            // Update the status from true to false
+            parts[1] = "false";
+
+            // Reconstruct the line
+            String updatedLine = String.join(" | ", parts);
+
+            // Replace the old line with the updated one
+            lines.set(index, updatedLine);
+
+            // Write all lines back to the file
+            Files.write(file, lines);
+
+        } catch (IOException e) {
+            throw new RonaldoException("Error unmarking task in file: " + e.getMessage());
         }
     }
 
@@ -122,4 +206,3 @@ public class Storage {
     }
 
 }
-

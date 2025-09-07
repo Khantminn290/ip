@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import ronaldo.exceptions.InvalidTaskNumberException;
+import ronaldo.exceptions.RonaldoException;
+
 /**
  * Represents a list of tasks and provides operations to manage them.
  * Supports adding, deleting, retrieving, marking, unmarking, and listing tasks.
@@ -42,11 +45,11 @@ public class TaskList {
         return tasks;
     }
 
-    public void markTask(int index) throws IndexOutOfBoundsException {
+    public void markTask(int index) throws RonaldoException {
         tasks.get(index).markAsDone();
     }
 
-    public void unmarkTask(int index) throws IndexOutOfBoundsException {
+    public void unmarkTask(int index) throws RonaldoException {
         tasks.get(index).unmark();
     }
 
