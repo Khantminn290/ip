@@ -25,6 +25,9 @@ public class Deadline extends Task {
     /** The time component of the deadline. */
     private final LocalTime time;
 
+    /** The deadline formatted as {@code MM-dd-yyyy}. */
+    private final String formattedBy;
+
     /**
      * Constructs a {@code Deadline} task with the given description and deadline string.
      *
@@ -40,6 +43,10 @@ public class Deadline extends Task {
             String[] dateTime = by.split(" ");
             this.date = LocalDate.parse(dateTime[0], DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             this.time = LocalTime.parse(dateTime[1], DateTimeFormatter.ofPattern("HHmm"));
+
+            this.formattedBy = this.date.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+                    + " "
+                    + this.time.format(DateTimeFormatter.ofPattern("HH:mm"));
         } catch (Exception e) {
             throw new IllegalArgumentException(
                     "Invalid deadline format. Expected format: yyyy-MM-dd HHmm", e
@@ -82,6 +89,6 @@ public class Deadline extends Task {
      */
     @Override
     public String toString() {
-        return "[D]" + super.toString() + " (by: " + by + ")";
+        return "[D]" + super.toString() + " (by: " + formattedBy + ")";
     }
 }
