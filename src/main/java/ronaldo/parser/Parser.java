@@ -16,7 +16,9 @@ import ronaldo.exceptions.InvalidDeadlineTaskException;
 import ronaldo.exceptions.InvalidEventTaskException;
 import ronaldo.exceptions.InvalidInputException;
 import ronaldo.exceptions.InvalidTaskNumberException;
+import ronaldo.exceptions.InvalidTodoTaskException;
 import ronaldo.exceptions.RonaldoException;
+import ronaldo.task.Priority;
 
 /**
  * The {@code Parser} class is responsible for interpreting raw user input
@@ -85,7 +87,8 @@ public class Parser {
      *                          or date format does not match {@code yyyy-MM-dd HHmm}
      */
     private static CommandExecutor parseDeadline(String input) throws RonaldoException {
-        String[] parts = input.split(" /by ");
+        // Split description and "/by ..." part
+        String[] parts = input.split(" /by ", 2);
         if (parts.length != 2) {
             throw new InvalidDeadlineTaskException();
         }
@@ -95,9 +98,29 @@ public class Parser {
             throw new EmptyStringException();
         }
 
-        String by = parts[1].trim();
+        // Now split "/by" part into deadline and priority
+        String[] byAndPriority = parts[1].split(" /priority ", 2);
+        if (byAndPriority.length != 2) {
+            throw new InvalidDeadlineTaskException();
+        }
+
+        String by = byAndPriority[0].trim();
         if (by.isBlank()) {
             throw new EmptyStringException();
+        }
+
+        String priorityStr = byAndPriority[1].trim();
+        if (priorityStr.isBlank()) {
+            throw new InvalidTodoTaskException();
+        }
+
+        // Convert to Priority (handles LOW/MEDIUM/HIGH and L/M/H)
+        Priority priority;
+        try {
+            priority = Priority.fromString(priorityStr);
+        } catch (IllegalArgumentException e) {
+            throw new RonaldoException("Invalid priority: " + priorityStr
+                    + ". Please use LOW/MEDIUM/HIGH or L/M/H.");
         }
 
         // Validate date format
@@ -109,8 +132,9 @@ public class Parser {
             throw new InvalidDateFormatException();
         }
 
-        return new DeadlineExecutor(description, by);
+        return new DeadlineExecutor(description, priority, by);
     }
+
 
     /**
      * Parses an event command with a description, start time, and end time.
@@ -120,24 +144,43 @@ public class Parser {
      * @throws RonaldoException if the format is invalid or fields are empty
      */
     private static CommandExecutor parseEvent(String input) throws RonaldoException {
-        String[] parts = input.split("/from|/to");
-        if (parts.length != 3) {
+        // First split description, from, to, and priority
+        String[] parts = input.split("/from|/to|/priority");
+        if (parts.length != 4) {
             throw new InvalidEventTaskException();
         }
 
+        // Extract description
         String description = parts[0].replaceFirst("event\\s+", "").trim();
         if (description.isBlank()) {
             throw new EmptyStringException();
         }
 
+        // Extract from, to, and priority
         String from = parts[1].trim();
         String to = parts[2].trim();
+        String priorityStr = parts[3].trim();
+
         if (from.isBlank() || to.isBlank()) {
             throw new EmptyStringException();
         }
 
-        return new EventExecutor(description, from, to);
+        if (priorityStr.isBlank()) {
+            throw new InvalidTodoTaskException();
+        }
+
+        // Convert to Priority (supports LOW/MEDIUM/HIGH and L/M/H)
+        Priority priority;
+        try {
+            priority = Priority.fromString(priorityStr);
+        } catch (IllegalArgumentException e) {
+            throw new RonaldoException("Invalid priority: " + priorityStr
+                    + ". Please use LOW/MEDIUM/HIGH or L/M/H.");
+        }
+
+        return new EventExecutor(description, from, to, priority);
     }
+
 
     /**
      * Parses a todo command with a description.
@@ -147,17 +190,30 @@ public class Parser {
      * @throws RonaldoException if the description is missing or empty
      */
     private static CommandExecutor parseTodo(String input) throws RonaldoException {
-        String[] parts = input.split(" ", 2);
-        if (parts.length < 2) {
-            throw new EmptyStringException();
-        }
+        String args = input.substring(5).trim();
 
-        String description = parts[1].trim();
+        // Split into description and priority part
+        String[] split = args.split("/priority", 2);
+        String description = split[0].trim();
+
         if (description.isBlank()) {
             throw new EmptyStringException();
         }
 
-        return new TodoExecutor(description);
+        if (split.length < 2 || split[1].trim().isEmpty()) {
+            throw new InvalidTodoTaskException();
+        }
+
+        String priorityStr = split[1].trim();
+        Priority priority;
+        try {
+            priority = Priority.fromString(priorityStr);
+        } catch (IllegalArgumentException e) {
+            throw new RonaldoException("Invalid priority: " + priorityStr
+                    + ". Please use LOW/MEDIUM/HIGH or L/M/H.");
+        }
+
+        return new TodoExecutor(description, priority);
     }
 
     /**

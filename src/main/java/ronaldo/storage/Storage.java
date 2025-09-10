@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 import ronaldo.exceptions.RonaldoException;
 import ronaldo.task.Deadline;
 import ronaldo.task.Event;
+import ronaldo.task.Priority;
 import ronaldo.task.Task;
 import ronaldo.task.ToDo;
 
@@ -168,33 +169,52 @@ public class Storage {
      *
      * @return an Arraylist of tasks loaded from the file. Returns an empty list if the file is empty.
      */
+    /**
+     * Loads tasks from the storage file into memory.
+     * Reconstructs task objects (ToDos, Deadlines, Events) from their stored string representations.
+     *
+     * @return an Arraylist of tasks loaded from the file. Returns an empty list if the file is empty.
+     */
     public ArrayList<Task> load() {
         try {
             return Files.readAllLines(file).stream()
                     .map(line -> {
+                        if (line.trim().isEmpty()) {
+                            return null; // skip blank lines
+                        }
                         String[] parts = line.split(" \\| ");
                         String type = parts[0];
                         boolean isDone = Boolean.parseBoolean(parts[1]);
                         Task task = null;
 
-                        switch (type) {
-                        case "T":
-                            task = new ToDo(parts[2]);
-                            break;
-                        case "D":
-                            task = new Deadline(parts[2], parts[3]);
-                            break;
-                        case "E":
-                            String[] time = parts[3].split("-");
-                            task = new Event(parts[2], time[0], time[1]);
-                            break;
-                        default:
-                            System.out.println("Unknown task type: " + type);
+                        try {
+                            Priority priority = Priority.fromString(parts[2]);
+
+                            switch (type) {
+                            case "T":
+                                task = new ToDo(parts[3]);
+                                task.setPriority(priority);
+                                break;
+                            case "D":
+                                task = new Deadline(parts[3], parts[4]);
+                                task.setPriority(priority);
+                                break;
+                            case "E":
+                                String[] time = parts[4].split(" - ");
+                                task = new Event(parts[3], time[0], time[1]);
+                                task.setPriority(priority);
+                                break;
+                            default:
+                                System.out.println("Unknown task type: " + type);
+                            }
+
+                            if (task != null && isDone) {
+                                task.markAsDone();
+                            }
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("Invalid priority in saved task: " + parts[2]);
                         }
 
-                        if (task != null && isDone) {
-                            task.markAsDone();
-                        }
                         return task;
                     })
                     .filter(task -> task != null) // drop unknown types
@@ -204,5 +224,6 @@ public class Storage {
             return new ArrayList<>();
         }
     }
+
 
 }

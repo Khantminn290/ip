@@ -3,6 +3,7 @@ package ronaldo.command;
 import ronaldo.exceptions.RonaldoException;
 import ronaldo.storage.Storage;
 import ronaldo.task.Event;
+import ronaldo.task.Priority;
 import ronaldo.task.TaskList;
 import ronaldo.ui.Ui;
 
@@ -25,6 +26,8 @@ public class EventExecutor implements CommandExecutor {
     /** The end time of the event. */
     private final String to;
 
+    private final Priority priority;
+
     /**
      * Constructs a new {@code EventExecutor} with the specified description, start time, and end time.
      *
@@ -32,10 +35,11 @@ public class EventExecutor implements CommandExecutor {
      * @param from        the start time of the event
      * @param to          the end time of the event
      */
-    public EventExecutor(String description, String from, String to) {
+    public EventExecutor(String description, String from, String to, Priority priority) {
         this.description = description;
         this.from = from;
         this.to = to;
+        this.priority = priority;
     }
 
     /**
@@ -54,9 +58,10 @@ public class EventExecutor implements CommandExecutor {
     @Override
     public String execute(TaskList taskList, Storage storage, Ui ui) throws RonaldoException {
         Event event = new Event(description, from, to);
+        event.setPriority(priority);
         taskList.addTask(event);
-        String writtenFormat = String.format("E | %s | %s | from: %s to: %s",
-                event.isDone(), description, from, to);
+        String writtenFormat = String.format("E | %s | %s | %s | %s - %s",
+                event.isDone(), priority, description, from, to);
         storage.writeTask(writtenFormat);
         ui.showAddTask(event, taskList.size());
         String message = "Got it. I've added this task:\n  " + event

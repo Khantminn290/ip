@@ -2,6 +2,7 @@ package ronaldo.command;
 
 import ronaldo.exceptions.RonaldoException;
 import ronaldo.storage.Storage;
+import ronaldo.task.Priority;
 import ronaldo.task.TaskList;
 import ronaldo.task.ToDo;
 import ronaldo.ui.Ui;
@@ -19,13 +20,16 @@ public class TodoExecutor implements CommandExecutor {
     /** The description of the ToDo task. */
     private final String description;
 
+    private final Priority priority;
+
     /**
      * Constructs a new {@code TodoExecutor} with the specified description.
      *
      * @param description the description of the ToDo task
      */
-    public TodoExecutor(String description) {
+    public TodoExecutor(String description, Priority priority) {
         this.description = description;
+        this.priority = priority;
     }
 
     /**
@@ -44,8 +48,9 @@ public class TodoExecutor implements CommandExecutor {
     @Override
     public String execute(TaskList taskList, Storage storage, Ui ui) throws RonaldoException {
         ToDo toDo = new ToDo(description);
+        toDo.setPriority(priority);
         taskList.addTask(toDo);
-        String writtenFormat = String.format("T | %s | %s", toDo.isDone(), description);
+        String writtenFormat = String.format("T | %s | %s | %s", toDo.isDone(), toDo.getPriority(), description);
         storage.writeTask(writtenFormat);
         ui.showAddTask(toDo, taskList.size());
         String message = "Got it. I've added this task:\n  " + toDo

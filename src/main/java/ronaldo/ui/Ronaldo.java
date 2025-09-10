@@ -101,7 +101,6 @@ public class Ronaldo {
         } catch (RonaldoException e) {
             return e.getMessage();
         }
-
     }
 
     public static void main(String[] args) {
