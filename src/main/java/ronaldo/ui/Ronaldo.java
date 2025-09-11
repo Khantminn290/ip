@@ -77,7 +77,6 @@ public class Ronaldo {
                 ui.showError(r.getMessage());
             } catch (Exception e) {
                 ui.showError("An unexpected error occurred: " + e.getMessage());
-                e.printStackTrace();
             }
         }
     }
