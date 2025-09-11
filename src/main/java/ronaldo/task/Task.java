@@ -12,6 +12,9 @@ public class Task {
     /** The completion status of the task. */
     protected boolean isDone;
 
+    /** The priority level of the task */
+    protected Priority priority;
+
     /**
      * Constructs a {@code Task} with the given description.
      * The task is initially not done.
@@ -56,6 +59,14 @@ public class Task {
         this.isDone = false;
     }
 
+    public void setPriority(Priority priority) {
+        this.priority = priority;
+    }
+
+    public String getPriority() {
+        return this.priority.toString();
+    }
+
     /**
      * Returns the description of the task.
      *
@@ -73,6 +84,6 @@ public class Task {
      */
     @Override
     public String toString() {
-        return String.format("[%s] %s", this.getStatusIcon(), this.description);
+        return String.format("[%s] %s (priority: %s)", this.getStatusIcon(), this.description, this.getPriority());
     }
 }
