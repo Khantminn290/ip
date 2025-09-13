@@ -1,4 +1,3 @@
-
 import java.io.IOException;
 import java.util.Collections;
 
@@ -38,6 +37,13 @@ public class DialogBox extends HBox {
     }
 
     /**
+     * Applies error styling (red font) to the dialog label.
+     */
+    private void applyErrorStyle() {
+        dialog.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+    }
+
+    /**
      * Flips the dialog box such that the ImageView is on the left and text on the right.
      */
     private void flip() {
@@ -54,6 +60,13 @@ public class DialogBox extends HBox {
     public static DialogBox getRonaldoDialog(String text, Image img) {
         var db = new DialogBox(text, img);
         db.flip();
+
+        // Only apply error style if the text starts with "Error:"
+        if (text != null && text.startsWith("Urm... ")) {
+            db.applyErrorStyle();
+        }
+
         return db;
     }
 }
+

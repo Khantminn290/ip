@@ -11,6 +11,6 @@ public class RonaldoException extends Exception {
      * @param message The detail message for this exception.
      */
     public RonaldoException(String message) {
-        super(message);
+        super("Urm... " + message);
     }
 }
