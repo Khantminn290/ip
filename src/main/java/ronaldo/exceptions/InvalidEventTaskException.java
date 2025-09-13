@@ -14,6 +14,6 @@ public class InvalidEventTaskException extends RonaldoException {
      * default error message describing the correct format.
      */
     public InvalidEventTaskException() {
-        super("Input a valid Event task - event task_name /from time /to time /priority");
+        super("Input a valid Event task - event task_name /from time /to time /p priority");
     }
 }

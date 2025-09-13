@@ -14,6 +14,6 @@ public class InvalidTodoTaskException extends RonaldoException {
      * default error message describing the correct format.
      */
     public InvalidTodoTaskException() {
-        super("Input a valid Todo task - todo task_name /priority");
+        super("Input a valid Todo task -> todo task_name /p priority");
     }
 }

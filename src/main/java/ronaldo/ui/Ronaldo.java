@@ -65,6 +65,11 @@ public class Ronaldo {
                     continue;
                 }
 
+                // AI-assisted refactor (ChatGPT):
+                // - Helped extract parsing + execution into a dedicated CommandExecutor class,
+                //   instead of mixing parsing, logic, and task handling inline here.
+                // - This separation makes the loop focused only on reading input
+                //   and delegating execution, improving maintainability.
                 CommandExecutor executor = Parser.parse(input);
                 executor.execute(taskList, storage, ui);
 
@@ -94,6 +99,11 @@ public class Ronaldo {
      */
     public String processInput(String input) {
         try {
+            // AI-assisted refactor (ChatGPT):
+            // - Instead of embedding command logic here, parsing + execution were
+            //   cleanly extracted into the CommandExecutor abstraction.
+            // - This makes it easier to reuse command handling in GUIs or tests,
+            //   since the method now just delegates and returns the result.
             CommandExecutor executor = Parser.parse(input);
             String message = executor.execute(taskList, storage, ui);
             return message;

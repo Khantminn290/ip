@@ -97,9 +97,15 @@ public class Parser {
         if (description.isBlank()) {
             throw new EmptyStringException();
         }
+        // AI-assisted (ChatGPT):
+        // - Used an example command ("deadline <desc> /by <yyyy-MM-dd HHmm> /p <priority>")
+        //   and helped design the parsing strategy.
+        // - Suggested splitting first by " /by " (to separate description & deadline),
+        //   then by " /p " (to capture both deadline date and priority).
+        // - This avoided deeply nested string handling and made the parsing clear.
 
         // Now split "/by" part into deadline and priority
-        String[] byAndPriority = parts[1].split(" /priority ", 2);
+        String[] byAndPriority = parts[1].split(" /p ", 2);
         if (byAndPriority.length != 2) {
             throw new InvalidDeadlineTaskException();
         }
@@ -145,7 +151,7 @@ public class Parser {
      */
     private static CommandExecutor parseEvent(String input) throws RonaldoException {
         // First split description, from, to, and priority
-        String[] parts = input.split("/from|/to|/priority");
+        String[] parts = input.split("/from|/to|/p");
         if (parts.length != 4) {
             throw new InvalidEventTaskException();
         }
@@ -193,7 +199,7 @@ public class Parser {
         String args = input.substring(5).trim();
 
         // Split into description and priority part
-        String[] split = args.split("/priority", 2);
+        String[] split = args.split("/p", 2);
         String description = split[0].trim();
 
         if (description.isBlank()) {
