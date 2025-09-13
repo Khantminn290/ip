@@ -40,7 +40,6 @@ public class Ronaldo {
         this.scanner = new Scanner(System.in);
         this.taskList = new TaskList(storage.load());
         this.ui = new Ui();
-        ui.showGreeting();
 
         // sanity checks
         assert this.storage != null;
@@ -57,6 +56,7 @@ public class Ronaldo {
      * </p>
      */
     public void readInput() {
+        ui.showGreeting();
         String input = "";
         while (!input.equals("bye")) {
             try {
