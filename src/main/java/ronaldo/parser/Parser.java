@@ -1,7 +1,6 @@
 package ronaldo.parser;
 
 import ronaldo.command.ByeExecutor;
-import ronaldo.command.Command;
 import ronaldo.command.CommandExecutor;
 import ronaldo.command.DeadlineExecutor;
 import ronaldo.command.DeleteExecutor;

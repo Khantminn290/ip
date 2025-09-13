@@ -169,12 +169,6 @@ public class Storage {
      *
      * @return an Arraylist of tasks loaded from the file. Returns an empty list if the file is empty.
      */
-    /**
-     * Loads tasks from the storage file into memory.
-     * Reconstructs task objects (ToDos, Deadlines, Events) from their stored string representations.
-     *
-     * @return an Arraylist of tasks loaded from the file. Returns an empty list if the file is empty.
-     */
     public ArrayList<Task> load() {
         try {
             return Files.readAllLines(file).stream()

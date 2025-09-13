@@ -19,18 +19,42 @@ public class TaskListTest {
     }
 
     @Test
-    public void testAddTaskIncreasesSize() {
-        Task task = new Task("Read book");
+    public void testAddTodoIncreasesSize() {
+        Task task = new ToDo("Read book");
+        task.setPriority(Priority.LOW);
         taskList.addTask(task);
 
         assertEquals(1, taskList.size());
         assertEquals(task, taskList.getTask(0));
+        assertEquals("[T][ ] Read book (priority: Low)", task.toString());
+    }
+
+    @Test
+    public void testAddDeadlineAndEvent() {
+        Task deadline = new Deadline("Submit report", "2025-09-15 1800");
+        deadline.setPriority(Priority.HIGH);
+
+        Task event = new Event("Meeting", "2025-09-13 1400", "2025-09-13 1600");
+        event.setPriority(Priority.MEDIUM);
+
+        taskList.addTask(deadline);
+        taskList.addTask(event);
+
+        assertEquals(2, taskList.size());
+        assertEquals("[D][ ] Submit report (priority: High) (by: 15 September 2025 6:00 pm)",
+                deadline.toString());
+        assertEquals("[E][ ] Meeting (priority: Medium) (from: 2025-09-13 1400 to: 2025-09-13 1600)",
+                event.toString());
     }
 
     @Test
     public void testDeleteTaskRemovesAndReturnsCorrectTask() {
-        Task t1 = new Task("Task 1");
-        Task t2 = new Task("Task 2");
+        Task t1 = new ToDo("Task 1");
+        t1.setPriority(Priority.MEDIUM);
+
+        Task t2 = new Deadline("Task 2", "2025-10-01 1200");
+        t2.setPriority(Priority.LOW);
+
         taskList.addTask(t1);
         taskList.addTask(t2);
 
@@ -47,7 +71,8 @@ public class TaskListTest {
 
     @Test
     public void testGetTaskValidAndInvalidIndex() {
-        Task task = new Task("Do laundry");
+        Task task = new ToDo("Do laundry");
+        task.setPriority(Priority.HIGH);
         taskList.addTask(task);
 
         assertEquals(task, taskList.getTask(0));
@@ -56,16 +81,17 @@ public class TaskListTest {
 
     @Test
     public void testMarkAndUnmarkTask() {
-        Task task = new Task("Run 5km");
+        Task task = new ToDo("Run 5km");
+        task.setPriority(Priority.MEDIUM);
         taskList.addTask(task);
 
         taskList.markTask(0);
         assertTrue(taskList.getTask(0).isDone());
-        assertEquals("[X] Run 5km", taskList.getTask(0).toString());
+        assertEquals("[T][X] Run 5km (priority: Medium)", taskList.getTask(0).toString());
 
         taskList.unmarkTask(0);
         assertFalse(taskList.getTask(0).isDone());
-        assertEquals("[ ] Run 5km", taskList.getTask(0).toString());
+        assertEquals("[T][ ] Run 5km (priority: Medium)", taskList.getTask(0).toString());
     }
 
     @Test
@@ -80,25 +106,35 @@ public class TaskListTest {
 
     @Test
     public void testListTasksMultiple() {
-        Task t1 = new Task("First task");
-        Task t2 = new Task("Second task");
+        Task t1 = new ToDo("First task");
+        t1.setPriority(Priority.MEDIUM);
+
+        Task t2 = new Deadline("Second task", "2025-12-01 2359");
+        t2.setPriority(Priority.LOW);
+
         taskList.addTask(t1);
         taskList.addTask(t2);
 
-        String expected = "1. [ ] First task\n2. [ ] Second task";
+        String expected =
+                "1. [T][ ] First task (priority: Medium)\n"
+                        + "2. [D][ ] Second task (priority: Low) (by: 1 December 2025 11:59 pm)";
         assertEquals(expected, taskList.listTasks());
     }
 
     @Test
     public void testGetAllTasksReturnsReference() {
-        Task t1 = new Task("Change oil");
+        Task t1 = new ToDo("Change oil");
+        t1.setPriority(Priority.HIGH);
         taskList.addTask(t1);
 
         ArrayList<Task> tasksRef = taskList.getAllTasks();
         assertEquals(1, tasksRef.size());
 
         // Modify the returned list directly -> should reflect in TaskList
-        tasksRef.add(new Task("Hacky task"));
+        Task hacky = new ToDo("Hacky task");
+        hacky.setPriority(Priority.LOW);
+        tasksRef.add(hacky);
+
         assertEquals(2, taskList.size());
     }
 }
