@@ -52,7 +52,7 @@ public class TodoExecutor implements CommandExecutor {
         taskList.addTask(toDo);
         String writtenFormat = String.format("T | %s | %s | %s", toDo.isDone(), toDo.getPriority(), description);
         storage.writeTask(writtenFormat);
-        ui.showAddTask(toDo, taskList.size());
+        //ui.showAddTask(toDo, taskList.size());
         String message = "Got it. I've added this task:\n  " + toDo
                 + String.format("\nNow you have %d tasks in the list.", taskList.size());
         return message;

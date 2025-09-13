@@ -63,7 +63,7 @@ public class EventExecutor implements CommandExecutor {
         String writtenFormat = String.format("E | %s | %s | %s | %s - %s",
                 event.isDone(), priority, description, from, to);
         storage.writeTask(writtenFormat);
-        ui.showAddTask(event, taskList.size());
+        //ui.showAddTask(event, taskList.size());
         String message = "Got it. I've added this task:\n  " + event
                 + String.format("\nNow you have %d tasks in the list.", taskList.size());
         return message;

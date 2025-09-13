@@ -26,7 +26,7 @@ public class ListExecutor implements CommandExecutor {
     @Override
     public String execute(TaskList taskList, Storage storage, Ui ui) throws RonaldoException {
         String tasks = taskList.listTasks();
-        ui.showTaskList(tasks);
+        //ui.showTaskList(tasks);
         return "Here are the tasks in your list:\n" + tasks;
     }
 }

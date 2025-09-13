@@ -43,7 +43,7 @@ public class DeleteExecutor implements CommandExecutor {
         storage.deleteTask(index);
 
         // Show confirmation message
-        ui.showDeleteTask(deletedTask, taskList.size());
+        //ui.showDeleteTask(deletedTask, taskList.size());
 
         String message = "Noted. I've removed this task:\n  " + deletedTask
                 + String.format("\nNow you have %d tasks in the list.", taskList.size());

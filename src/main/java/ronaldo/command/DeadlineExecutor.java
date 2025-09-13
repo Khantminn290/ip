@@ -54,7 +54,7 @@ public class DeadlineExecutor implements CommandExecutor {
         String writtenFormat = String.format("D | %s | %s | %s | %s",
                 deadline.isDone(), priority, description, deadline.getBy());
         storage.writeTask(writtenFormat);
-        ui.showAddTask(deadline, taskList.size());
+        //ui.showAddTask(deadline, taskList.size());
 
         String message = "Got it. I've added this task:\n  " + deadline
                 + String.format("\nNow you have %d tasks in the list.", taskList.size());

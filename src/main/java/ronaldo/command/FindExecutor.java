@@ -47,7 +47,7 @@ public class FindExecutor implements CommandExecutor {
     @Override
     public String execute(TaskList taskList, Storage storage, Ui ui) throws RonaldoException {
         ArrayList<Task> matchingTasks = taskList.findTasks(keyword);
-        ui.showMatchingTasks(matchingTasks);
+        //ui.showMatchingTasks(matchingTasks);
 
         if (matchingTasks.isEmpty()) {
             return "No matching tasks found in your list.";

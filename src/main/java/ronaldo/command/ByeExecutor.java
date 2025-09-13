@@ -25,7 +25,7 @@ public class ByeExecutor implements CommandExecutor {
      */
     @Override
     public String execute(TaskList taskList, Storage storage, Ui ui) throws RonaldoException {
-        ui.showFarewell();
+        //ui.showFarewell();
         return "Bye. I'm going to do some WingChun";
     }
 }
