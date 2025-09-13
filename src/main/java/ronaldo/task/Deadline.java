@@ -3,6 +3,7 @@ package ronaldo.task;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 /**
  * Represents a task with a deadline.
@@ -44,9 +45,9 @@ public class Deadline extends Task {
             this.date = LocalDate.parse(dateTime[0], DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             this.time = LocalTime.parse(dateTime[1], DateTimeFormatter.ofPattern("HHmm"));
 
-            this.formattedBy = this.date.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+            this.formattedBy = this.date.format(DateTimeFormatter.ofPattern("d MMMM yyyy", Locale.UK))
                     + " "
-                    + this.time.format(DateTimeFormatter.ofPattern("h:mm a"));
+                    + this.time.format(DateTimeFormatter.ofPattern("h:mm a", Locale.UK));
         } catch (Exception e) {
             throw new IllegalArgumentException(
                     "Invalid deadline format. Expected format: yyyy-MM-dd HHmm", e
