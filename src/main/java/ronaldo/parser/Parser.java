@@ -257,35 +257,4 @@ public class Parser {
 
         return new FindExecutor(keyword);
     }
-
-    /**
-     * A simplified parser that categorizes the command type without arguments.
-     *
-     * @param input the raw user input
-     * @return the corresponding {@link Command} enum value,
-     *         or {@link Command#INVALID} if the input does not match a known command
-     */
-    public static Command parse2(String input) {
-        if (input.equals("bye")) {
-            return Command.BYE;
-        } else if (input.equals("list")) {
-            return Command.LIST;
-        } else if (input.startsWith("mark ")) {
-            return Command.MARK;
-        } else if (input.startsWith("unmark ")) {
-            return Command.UNMARK;
-        } else if (input.startsWith("deadline")) {
-            return Command.DEADLINE;
-        } else if (input.startsWith("event")) {
-            return Command.EVENT;
-        } else if (input.startsWith("todo")) {
-            return Command.TODO;
-        } else if (input.startsWith("delete")) {
-            return Command.DELETE;
-        } else if (input.startsWith("find")) {
-            return Command.FIND;
-        } else {
-            return Command.INVALID;
-        }
-    }
 }
