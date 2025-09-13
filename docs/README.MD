@@ -1,6 +1,6 @@
 # Ronaldo Chatbot 
 
-Ronaldo is a command-line chatbot inspired by task management applications. It helps you manage your **ToDo**, **Deadline**, and **Event** tasks efficiently with priority levels. The chatbot supports marking tasks as done, unmarking them, listing tasks, and provides user-friendly feedback for all operations.
+Ronaldo is a command-line chatbot inspired by task management applications. It helps you manage your **ToDo**, **Deadline**, and **Event** tasks efficiently with priority levels. The chatbot supports marking tasks as done, unmarking them, listing tasks, finding tasks, deleting tasks, and provides user-friendly feedback for all operations.
 
 ---
 
@@ -19,6 +19,7 @@ Ronaldo is a command-line chatbot inspired by task management applications. It h
 ## Features
 
 * Add, delete, and list tasks.
+* Search tasks by description.
 * Support for three types of tasks:
 
     * **ToDo**: simple tasks with a description.
@@ -80,11 +81,25 @@ mark <task index>
 unmark <task index>
 ```
 
+### Delete a Task
+
+```
+delete <task index>
+```
+
+### Find Tasks by Description
+
+```
+find <description>
+```
+
 ### List all Tasks
 
 ```
 list
 ```
+
+---
 
 ## Getting Started
 
@@ -97,6 +112,8 @@ list
 ```bash
 java -jar ronaldo.jar
 ```
+
+4. Type commands in the command box.
 
 ---
 
@@ -125,6 +142,16 @@ ____________________________________________________________
 event Concert /from 2025-09-13 1400 /to 2025-09-13 1600 /p low
 ____________________________________________________________
 Got it. I've added this task:
-  [E][ ] C
+  [E][ ] Concert (priority: Low) (from: 2025-09-13 1400 to: 2025-09-13 1600)
+Now you have 3 tasks in the list.
+____________________________________________________________
 ```
 
+
+## Screenshots
+
+![Ronaldo UI](https://khantminn290.github.io/ip/Ui.png)
+
+---
+
+## Enjoy managing your tasks with Ronaldo! SIUU! ⚽
